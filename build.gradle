@@ -20,6 +20,13 @@ repositories {
     maven {
         url 'https://masa.dy.fi/maven'
     }
+
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 loom {
@@ -50,7 +57,8 @@ dependencies {
 
     // malilib
     // https://masa.dy.fi/maven/fi/dy/masa/malilib/
-    modImplementation "fi.dy.masa.malilib:${project.malilib_version}"
+    modImplementation "curse.maven:malilib-303119:${project.malilib_file_id}"
+    modImplementation "curse.maven:item-scroller-242064:${project.item_scroller_file_id}"
 }
 
 processResources {
