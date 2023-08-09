@@ -13,7 +13,7 @@ public class ChunkdebugApi {
     public static final int HELLO = 0;
     public static final int DATA = 16;
     public static final int VERSION = 1_0_3;
-    private boolean available;
+    public Identifier listen;
     private ClientPlayNetworkHandler networkHandler;
 
     public final void handlePacket(PacketByteBuf packetByteBuf, ClientPlayNetworkHandler networkHandler) {
@@ -31,7 +31,6 @@ public class ChunkdebugApi {
             return;
         }
 
-        this.available = true;
         this.networkHandler = networkHandler;
         LOGGER.info("Connected to ChunkDebug server");
 
@@ -42,8 +41,6 @@ public class ChunkdebugApi {
     }
 
     public final void onData(PacketByteBuf packetByteBuf, ClientPlayNetworkHandler networkHandler) {
-        if (!this.available) return;
-
         int size = packetByteBuf.readVarInt();
 
         long[] chunkPositions = packetByteBuf.readLongArray(new long[size]);
@@ -65,14 +62,16 @@ public class ChunkdebugApi {
     }
 
     public void requestChunkData(Identifier world) {
-        if (!this.available || this.networkHandler == null) {
+        if (this.networkHandler == null) {
             LOGGER.warn("Not yet initialized but using");
             return;
         }
 
+        listen = world.equals(new Identifier("minecraft:dummy")) ? null : world;
         this.networkHandler.sendPacket(new CustomPayloadC2SPacket(
                 PACKET_ID,
                 new PacketByteBuf(Unpooled.buffer()).writeVarInt(DATA).writeIdentifier(world)
         ));
     }
 }
+

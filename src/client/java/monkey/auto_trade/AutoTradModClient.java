@@ -9,12 +9,13 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.ChunkPos;
 
@@ -25,6 +26,8 @@ import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 public class AutoTradModClient implements ClientModInitializer {
     static ChunkdebugApi CHUNK_DEBUG = new ChunkdebugApi();
     static ChunkPos villagerOldPos;
+    static Identifier villageOldWorld;
+    static boolean illimited_trade_toggle;
 
     @Override
     public void onInitializeClient() {
@@ -33,13 +36,22 @@ public class AutoTradModClient implements ClientModInitializer {
         });
 
         START_CLIENT_TICK.register(client -> {
-            if (client.crosshairTarget instanceof EntityHitResult hitResult) {
+            if (illimited_trade_toggle && client.crosshairTarget instanceof EntityHitResult hitResult) {
                 Entity entity = hitResult.getEntity();
                 if (entity instanceof VillagerEntity) {
                     villagerOldPos = entity.getChunkPos();
+                    villageOldWorld = entity.getWorld().getRegistryKey().getValue();
 
-                    Screen screen = GuiUtils.getCurrentScreen();
-                    if (screen instanceof MerchantScreen merchantScreen) {
+                    if (client.interactionManager != null && GuiUtils.getCurrentScreen() == null) {
+                        client.interactionManager.interactEntity(client.player, entity, Hand.MAIN_HAND);
+                    }
+
+                    // if in listening world != villageOldWorld re-listen
+                    if (CHUNK_DEBUG.listen != null && !CHUNK_DEBUG.listen.equals(villageOldWorld)) {
+                        CHUNK_DEBUG.requestChunkData(villageOldWorld);
+                    }
+
+                    if (GuiUtils.getCurrentScreen() instanceof MerchantScreen merchantScreen) {
                         MerchantScreenHandler handler = merchantScreen.getScreenHandler();
                         IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
 
@@ -52,10 +64,17 @@ public class AutoTradModClient implements ClientModInitializer {
             }
         });
 
+
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            dispatcher.register(ClientCommandManager.literal("start").executes(context -> {
+            dispatcher.register(ClientCommandManager.literal("illimited_trade_toggle").executes(context -> {
                 context.getSource().sendFeedback(Text.literal("Hello, world!"));
-                CHUNK_DEBUG.requestChunkData();
+
+                illimited_trade_toggle = !illimited_trade_toggle;
+
+                // if close remove listen
+                if (!illimited_trade_toggle && CHUNK_DEBUG.listen != null) {
+                    CHUNK_DEBUG.requestChunkData();
+                }
 
                 return 0;
             }));
