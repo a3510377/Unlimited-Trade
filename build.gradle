@@ -18,14 +18,14 @@ repositories {
     // for more information about repositories.
 
     maven {
-        url 'https://masa.dy.fi/maven'
-    }
-
-    maven {
         url "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
+    }
+
+    maven {
+        url = "https://api.modrinth.com/maven"
     }
 }
 
@@ -59,6 +59,7 @@ dependencies {
     // https://masa.dy.fi/maven/fi/dy/masa/malilib/
     modImplementation "curse.maven:malilib-303119:${project.malilib_file_id}"
     modImplementation "curse.maven:item-scroller-242064:${project.item_scroller_file_id}"
+    compileOnly "maven.modrinth:chunkdebug:${project.chunkdebug_version}"
 }
 
 processResources {
