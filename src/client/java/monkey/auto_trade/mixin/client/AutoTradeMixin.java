@@ -2,6 +2,7 @@ package monkey.auto_trade.mixin.client;
 
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
+import fi.dy.masa.itemscroller.villager.VillagerUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.auto_trade.AutoTradModClient;
@@ -40,15 +41,19 @@ public class AutoTradeMixin {
             IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
 
             if (!Objects.requireNonNull(player).isSneaking() && !favorites.isEmpty()) {
-                Item sellItem = handler.getRecipes().get(0).getSellItem().getItem();
+                InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
+                for (int index = 0; index < favorites.size(); ++index) {
+                    int realTradeIndex = VillagerUtils.getRealTradeIndexFor(index, handler);
+                    Item sellItem = handler.getRecipes().get(realTradeIndex).getSellItem().getItem();
 
-                for (Slot slot : handler.slots) {
-                    if (slot.getStack().getItem().equals(sellItem)) {
-                        InventoryUtils.dropStack(merchantScreen, slot.getIndex());
+                    for (Slot slot : handler.slots) {
+                        if (slot.getStack().getItem().equals(sellItem)) {
+                            InventoryUtils.dropStack(merchantScreen, slot.getIndex());
+                        }
                     }
                 }
-                //                merchantScreen.close();
             }
+            //                merchantScreen.close();
         }
     }
 }
