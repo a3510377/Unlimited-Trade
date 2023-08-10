@@ -5,6 +5,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import static monkey.auto_trade.AutoTradMod.LOGGER;
 
@@ -13,7 +14,10 @@ public class ChunkdebugApi {
     public static final int HELLO = 0;
     public static final int DATA = 16;
     public static final int VERSION = 1_0_3;
+
+    @Nullable
     public Identifier listen;
+    @Nullable
     private ClientPlayNetworkHandler networkHandler;
 
     public final void handlePacket(PacketByteBuf packetByteBuf, ClientPlayNetworkHandler networkHandler) {
@@ -36,7 +40,7 @@ public class ChunkdebugApi {
 
         networkHandler.sendPacket(new CustomPayloadC2SPacket(
                 PACKET_ID,
-                new PacketByteBuf(Unpooled.buffer()).writeVarInt(HELLO).writeString("v1.0.0").writeVarInt(VERSION)
+                new PacketByteBuf(Unpooled.buffer()).writeVarInt(HELLO).writeString("v0.1.0").writeVarInt(VERSION)
         ));
     }
 
@@ -74,4 +78,3 @@ public class ChunkdebugApi {
         ));
     }
 }
-
