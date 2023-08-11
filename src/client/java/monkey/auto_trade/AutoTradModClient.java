@@ -1,16 +1,25 @@
 package monkey.auto_trade;
 
+import fi.dy.masa.itemscroller.util.InventoryUtils;
+import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.auto_trade.chunkdebug.ChunkdebugApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.screen.MerchantScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
@@ -21,7 +30,7 @@ public class AutoTradModClient implements ClientModInitializer {
     public static Vec3d villagerOldPos;
     public static Identifier villageOldWorld;
     public static boolean illimitedTradeToggle;
-    private static int delayTick;
+    public static boolean startTrade;
 
     @Override
     public void onInitializeClient() {
@@ -30,42 +39,55 @@ public class AutoTradModClient implements ClientModInitializer {
         });
 
         START_CLIENT_TICK.register(client -> {
-            if (delayTick > 0) {
-                delayTick--;
-                return;
-            }
+            if (!illimitedTradeToggle) return;
 
-            if (illimitedTradeToggle && client.crosshairTarget instanceof EntityHitResult hitResult) {
+            Screen screen = GuiUtils.getCurrentScreen();
+            if (!startTrade) CHUNK_DEBUG.requestChunkData();
+            if (startTrade && screen instanceof MerchantScreen merchantScreen) {
+                MerchantScreenHandler handler = merchantScreen.getScreenHandler();
+                IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
+
+                if (client.player != null && !client.player.isSneaking() && !favorites.isEmpty()) {
+                    InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
+                    for (int index = 0; index < favorites.size(); ++index) {
+                        Item sellItem = handler.getRecipes().get(index).getSellItem().getItem();
+
+                        // drop all sell item
+                        for (Slot slot : handler.slots) {
+                            if (slot.getStack().getItem().equals(sellItem)) {
+                                InventoryUtils.dropStack(merchantScreen, slot.id);
+                            }
+                        }
+                    }
+                    merchantScreen.close();
+                }
+            } else if (client.crosshairTarget instanceof EntityHitResult hitResult) {
                 Entity entity = hitResult.getEntity();
                 if (entity instanceof VillagerEntity) {
                     villagerOldPos = entity.getPos();
                     villageOldWorld = entity.getWorld().getRegistryKey().getValue();
 
-                    if (client.interactionManager != null && client.player != null && GuiUtils.getCurrentScreen() == null) {
+                    if (client.interactionManager != null && client.player != null && screen == null) {
                         if (client.player.getPos().isInRange(villagerOldPos, 2)) {
                             client.interactionManager.interactEntity(client.player, entity, Hand.MAIN_HAND);
-                            delayTick = 20; // ~= 1s
                         }
                     }
 
                     // if in listening world != villageOldWorld re-listen
-                    if (CHUNK_DEBUG.listen != null && !CHUNK_DEBUG.listen.equals(villageOldWorld)) {
+                    if (CHUNK_DEBUG.listen == null || !CHUNK_DEBUG.listen.equals(villageOldWorld)) {
                         CHUNK_DEBUG.requestChunkData(villageOldWorld);
                     }
                 }
+            } else if (client.crosshairTarget instanceof BlockHitResult hitResult) {
             }
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(ClientCommandManager.literal("illimited_trade_toggle").executes(context -> {
-                delayTick = 0;
                 illimitedTradeToggle = !illimitedTradeToggle;
                 context.getSource().sendFeedback(Text.literal(illimitedTradeToggle ? "自動交易啟動" : "自動交易關閉"));
 
-                // if close remove listen
-                if (!illimitedTradeToggle && CHUNK_DEBUG.listen != null) {
-                    CHUNK_DEBUG.requestChunkData();
-                }
+                if (!illimitedTradeToggle && CHUNK_DEBUG.listen != null) CHUNK_DEBUG.requestChunkData();
 
                 return 0;
             }));

@@ -54,7 +54,6 @@ public class ChunkdebugApi {
         String world = packetByteBuf.readString();
 
         ChunkData.deserialize(world, chunkPositions, levelTypes, statusTypes, ticketTypes);
-        LOGGER.info(ChunkData.DATA.toString());
     }
 
     public void requestChunkData() {
