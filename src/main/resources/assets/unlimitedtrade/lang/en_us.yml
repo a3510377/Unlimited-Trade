@@ -1,0 +1,9 @@
+unlimitedtrade:
+  unlimitedtrade:
+    enabled: "Enabled"
+    disabled: "Disabled"
+  gui:
+    title: "title"
+    config_type:
+      generic: "generic"
+      hotkey: "hotkey"

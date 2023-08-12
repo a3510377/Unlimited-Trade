@@ -1,4 +1,4 @@
-package monkey.unlimitedtrademod.utils.chunkdebug;
+package monkey.unlimitedtrade.utils.chunkdebug;
 
 import net.minecraft.server.world.ChunkLevelType;
 import net.minecraft.util.Identifier;

@@ -98,5 +98,5 @@ publishing {
 //// https://github.com/Fallen-Breath/yamlang
 yamlang {
     targetSourceSets = [sourceSets.main]
-    inputDir = 'assets/unlimitedtrademod/lang'
+    inputDir = 'assets/unlimitedtrade/lang'
 }

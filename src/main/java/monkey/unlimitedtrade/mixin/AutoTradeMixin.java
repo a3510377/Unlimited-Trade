@@ -1,6 +1,6 @@
-package monkey.unlimitedtrademod.mixin;
+package monkey.unlimitedtrade.mixin;
 
-import monkey.unlimitedtrademod.AutoTradModClient;
+import monkey.unlimitedtrade.AutoTradModClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static monkey.unlimitedtrademod.AutoTradModClient.CHUNK_DEBUG;
+import static monkey.unlimitedtrade.AutoTradModClient.CHUNK_DEBUG;
 
 @Mixin(MinecraftClient.class)
 public class AutoTradeMixin {

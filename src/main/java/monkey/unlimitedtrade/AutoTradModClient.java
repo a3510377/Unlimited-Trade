@@ -1,15 +1,16 @@
-package monkey.unlimitedtrademod;
+package monkey.unlimitedtrade;
 
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import monkey.unlimitedtrademod.utils.chunkdebug.ChunkData;
-import monkey.unlimitedtrademod.utils.chunkdebug.ChunkdebugApi;
+import monkey.unlimitedtrade.utils.chunkdebug.ChunkData;
+import monkey.unlimitedtrade.utils.chunkdebug.ChunkdebugApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,9 @@ import org.slf4j.LoggerFactory;
 import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.START_CLIENT_TICK;
 
 public class AutoTradModClient implements ClientModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("unlimitedtrademod");
+    public static final String MOD_ID = "unlimitedtrade";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static String VERSION = "unknown";
     public static ChunkdebugApi CHUNK_DEBUG = new ChunkdebugApi();
     public static boolean illimitedTradeToggle;
     @Nullable
@@ -38,13 +41,15 @@ public class AutoTradModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
+
         MinecraftClient clientInstance = MinecraftClient.getInstance();
 
         ClientCommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("illimited_trade_toggle").executes(context -> {
                     illimitedTradeToggle = !illimitedTradeToggle;
 
-                    String translate = "unlimitedtrademod.unlimitedtrademod." + (illimitedTradeToggle ? "enabled" : "disabled");
+                    String translate = "unlimitedtrade.unlimitedtrade." + (illimitedTradeToggle ? "enabled" : "disabled");
                     context.getSource().sendFeedback(Text.literal(StringUtils.translate(translate)));
 
                     if (!illimitedTradeToggle && CHUNK_DEBUG.getCurrentWorld() != null) {

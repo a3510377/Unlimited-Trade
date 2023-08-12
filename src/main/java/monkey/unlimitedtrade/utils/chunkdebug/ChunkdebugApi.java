@@ -1,4 +1,4 @@
-package monkey.unlimitedtrademod.utils.chunkdebug;
+package monkey.unlimitedtrade.utils.chunkdebug;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static monkey.unlimitedtrademod.AutoTradModClient.LOGGER;
+import static monkey.unlimitedtrade.AutoTradModClient.LOGGER;
 
 public class ChunkdebugApi {
     public static final Identifier PACKET_ID = new Identifier("essentialclient", "chunkdebug");

@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "monkey.unlimitedtrademod.mixin",
+	"package": "monkey.unlimitedtrade.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"AutoTradeMixin"

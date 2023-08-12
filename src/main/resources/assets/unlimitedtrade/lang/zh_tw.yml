@@ -1,0 +1,9 @@
+unlimitedtrade:
+  unlimitedtrade:
+    enabled: "開啟"
+    disabled: "關閉"
+  gui:
+    title: "title"
+    config_type:
+      generic: "generic"
+      hotkey: "hotkey"
