@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "monkey.unlimitedtrademod.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"AutoTradeMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
