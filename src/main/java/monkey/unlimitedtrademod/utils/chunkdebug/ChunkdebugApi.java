@@ -13,6 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +25,10 @@ public class ChunkdebugApi {
             DATA = 16,
             VERSION = 1_0_3;
 
-    public final Event<Update> UPDATE_EVENT = EventFactory.createArrayBacked(Update.class, callbacks -> (world, chunkData) -> {
-        for (Update callback : callbacks) {
-            callback.onUpdate(world, chunkData);
-        }
-    });
+    public final Event<Update> UPDATE_EVENT = EventFactory.createArrayBacked(
+            Update.class,
+            callbacks -> (world, chunkData) -> Arrays.stream(callbacks).forEach(callback -> callback.onUpdate(world, chunkData))
+    );
     public final Map<ChunkPos, ChunkData> worldChunks = new HashMap<>();
     @Nullable
     public ClientPlayNetworkHandler networkHandler;
@@ -36,9 +36,7 @@ public class ChunkdebugApi {
     private Identifier currentWorld;
 
     public ChunkdebugApi() {
-        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, ((client, handler, buf, responseSender) -> {
-            this.handlePacket(buf, handler);
-        }));
+        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, ((client, handler, buf, responseSender) -> this.handlePacket(buf, handler)));
     }
 
     private void handlePacket(PacketByteBuf buf, ClientPlayNetworkHandler handler) {
