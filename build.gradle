@@ -50,7 +50,6 @@ dependencies {
 
     modImplementation "curse.maven:malilib-303119:${project.malilib_file_id}"
     modImplementation "curse.maven:item-scroller-242064:${project.item_scroller_file_id}"
-//    modImplementation "curse.maven:magiclib-576459:${project.magiclib_file_id}-${project.minecraft_version.replace(".", "_")}"
     modImplementation("top.hendrixshen.magiclib:magiclib-${project.minecraft_version.replace(".", "_")}:${project.magiclib_version}") {
         exclude(group: "carpet", module: "fabric-carpet")
     }
