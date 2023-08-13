@@ -20,7 +20,7 @@ public class Configs {
     @Config(category = Category.SETTING)
     public static ConfigHotkey openConfigGui;
 
-    @Hotkey(hotkey = "V,C")
+    @Hotkey(hotkey = "C,V")
     @Config(category = Category.SETTING)
     public static boolean startTrade = false;
 
