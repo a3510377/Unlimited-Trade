@@ -1,9 +1,27 @@
 unlimitedtrade:
-  unlimitedtrade:
-    enabled: "Enabled"
-    disabled: "Disabled"
   gui:
-    title: "title"
-    config_type:
-      generic: "generic"
-      hotkey: "hotkey"
+    title: "Unlimited Trade Mod"
+    button.tab:
+      setting: "setting"
+  config.setting:
+    openConfigGui:
+      name: "open config gui"
+      comment: "設定開啟設定介面快捷鍵"
+    startTrade:
+      pretty_name: "start trade"
+      name: "startTrade"
+      comment: "開啟無限交易"
+    afterTradeActions:
+      name: "after trade actions"
+      comment: "設定交易後動作\n"
+    waitChunkDebug:
+      name: "wait chunk debug"
+      comment: "若須更穩定的交易，請於伺服器安裝 ChunkDebug 模組\n用於防止交易所加載而造成交易無效"
+    dropBlockList:
+      name: "drop block list"
+      comment: "限制自動拋出的物品類型"
+  label:
+    afterTradeActions:
+      use: "對方塊交互/使用"
+      use_and_drop: "對方塊交互/使用 並拋出購買物"
+      fill_container: "將購買物放入容器中"

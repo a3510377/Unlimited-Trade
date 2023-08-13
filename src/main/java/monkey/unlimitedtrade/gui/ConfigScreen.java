@@ -1,17 +1,20 @@
 package monkey.unlimitedtrade.gui;
 
-import fi.dy.masa.malilib.gui.GuiConfigsBase;
+
+import fi.dy.masa.malilib.util.StringUtils;
 import monkey.unlimitedtrade.AutoTradModClient;
+import monkey.unlimitedtrade.config.Configs;
+import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
+import top.hendrixshen.magiclib.malilib.impl.gui.ConfigGui;
 
-import java.util.List;
+public class ConfigScreen extends ConfigGui {
+    public static final ConfigScreen instance = new ConfigScreen(
+        AutoTradModClient.MOD_ID,
+        Configs.Category.SETTING,
+        ConfigManager.get(AutoTradModClient.MOD_ID)
+    );
 
-public class ConfigScreen extends GuiConfigsBase {
-    public ConfigScreen() {
-        super(10, 50, AutoTradModClient.MOD_ID, null, "unlimitedtrade.gui.title", AutoTradModClient.VERSION);
-    }
-
-    @Override
-    public List<ConfigOptionWrapper> getConfigs() {
-        return null;
+    private ConfigScreen(String identifier, String defaultTab, ConfigManager configManager) {
+        super(identifier, defaultTab, configManager, () -> StringUtils.translate("unlimitedtrade.gui.title", AutoTradModClient.VERSION));
     }
 }

@@ -5,6 +5,7 @@ import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import monkey.unlimitedtrade.config.Configs;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkData;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkdebugApi;
 import net.fabricmc.api.ClientModInitializer;
@@ -27,6 +28,8 @@ import net.minecraft.util.hit.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.hendrixshen.magiclib.malilib.impl.ConfigHandler;
+import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
 
 import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.START_CLIENT_TICK;
 
@@ -43,8 +46,13 @@ public class AutoTradModClient implements ClientModInitializer {
     public void onInitializeClient() {
         VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
 
-        MinecraftClient clientInstance = MinecraftClient.getInstance();
+        ConfigManager cm = ConfigManager.get(MOD_ID);
+        cm.parseConfigClass(Configs.class);
+        ConfigHandler configHandler = new ConfigHandler(MOD_ID, cm, Configs.VERSION);
+        ConfigHandler.register(configHandler);
+        Configs.init(cm);
 
+        MinecraftClient clientInstance = MinecraftClient.getInstance();
         ClientCommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("illimited_trade_toggle").executes(context -> {
                     illimitedTradeToggle = !illimitedTradeToggle;

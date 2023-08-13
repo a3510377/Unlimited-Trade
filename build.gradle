@@ -24,9 +24,16 @@ repositories {
         }
     }
 
-    // maven {
-    //     url = "https://api.modrinth.com/maven"
-    // }
+    maven {
+        name("Modrinth Maven")
+        url("https://api.modrinth.com/maven")
+
+        content {
+            includeGroup("maven.modrinth")
+        }
+    }
+
+    mavenCentral()
 }
 
 dependencies {
@@ -40,14 +47,14 @@ dependencies {
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
     modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
-    // malilib
-    // https://masa.dy.fi/maven/fi/dy/masa/malilib/
     modImplementation "curse.maven:malilib-303119:${project.malilib_file_id}"
     modImplementation "curse.maven:item-scroller-242064:${project.item_scroller_file_id}"
-    // compileOnly "maven.modrinth:chunkdebug:${project.chunkdebug_version}"
+//    modImplementation "curse.maven:magiclib-576459:${project.magiclib_file_id}-${project.minecraft_version.replace(".", "_")}"
+    modImplementation("top.hendrixshen.magiclib:magiclib-${project.minecraft_version.replace(".", "_")}:${project.magiclib_version}") {
+        exclude(group: "carpet", module: "fabric-carpet")
+    }
 }
 
 processResources {

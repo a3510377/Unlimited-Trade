@@ -17,6 +17,9 @@
   "entrypoints": {
     "client": [
       "monkey.unlimitedtrade.AutoTradModClient"
+    ],
+    "modmenu": [
+      "monkey.unlimitedtrade.gui.modmenu.ModMenuApiImpl"
     ]
   },
   "mixins": [
