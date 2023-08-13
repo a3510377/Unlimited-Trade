@@ -3,24 +3,19 @@ package monkey.unlimitedtrade;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
-import fi.dy.masa.malilib.util.StringUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.unlimitedtrade.config.Configs;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkData;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkdebugApi;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.item.Item;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.world.ChunkLevelType;
-import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -38,9 +33,8 @@ public class AutoTradModClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static String VERSION = "unknown";
     public static ChunkdebugApi CHUNK_DEBUG = new ChunkdebugApi();
-    public static boolean illimitedTradeToggle;
     @Nullable
-    public static Entity tradeEntity;
+    public static MerchantEntity tradeEntity;
 
     @Override
     public void onInitializeClient() {
@@ -52,29 +46,12 @@ public class AutoTradModClient implements ClientModInitializer {
         ConfigHandler.register(configHandler);
         Configs.init(cm);
 
-        MinecraftClient clientInstance = MinecraftClient.getInstance();
-        ClientCommandRegistrationCallback.EVENT.register(
-                (dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("illimited_trade_toggle").executes(context -> {
-                    illimitedTradeToggle = !illimitedTradeToggle;
-
-                    String translate = "unlimitedtrade.unlimitedtrade." + (illimitedTradeToggle ? "enabled" : "disabled");
-                    context.getSource().sendFeedback(Text.literal(StringUtils.translate(translate)));
-
-                    if (!illimitedTradeToggle && CHUNK_DEBUG.getCurrentWorld() != null) {
-                        CHUNK_DEBUG.requestChunkData();
-                    }
-
-                    return 0;
-                }))
-        );
-
         START_CLIENT_TICK.register(client -> {
-            if (!illimitedTradeToggle) return;
+            if (!Configs.startTrade) return;
 
             if (client.crosshairTarget instanceof EntityHitResult hitResult) {
-                Entity entity = hitResult.getEntity();
-                if (entity instanceof MerchantEntity) {
-                    tradeEntity = entity;
+                if (hitResult.getEntity() instanceof MerchantEntity merchantEntity) {
+                    tradeEntity = merchantEntity;
                     Identifier world = tradeEntity.getWorld().getRegistryKey().getValue();
 
                     if (client.interactionManager != null && client.player != null && GuiUtils.getCurrentScreen() == null) {
@@ -100,7 +77,7 @@ public class AutoTradModClient implements ClientModInitializer {
                     if (CHUNK_DEBUG.networkHandler == null) {
                         this.startTrade(client, merchantScreen);
                     }
-                } else if (clientInstance.player != null && !clientInstance.player.isSneaking()) {
+                } else if (client.player != null && !client.player.isSneaking()) {
                     // Check for Unlimited Trading Conditions (chunkData.levelType is INACCESSIBLE)
                     if (data == null || data.levelType() == ChunkLevelType.INACCESSIBLE) {
                         this.startTrade(client, merchantScreen);
