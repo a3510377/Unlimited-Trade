@@ -1,8 +1,8 @@
 unlimitedtrade:
   gui:
-    title: "Unlimited Trade 无限交易模组"
+    title: "Unlimited Trade Mod"
     button.tab:
-      setting: "设定"
+      setting: "setting"
   config.setting:
     openConfigGui:
       name: "open Config Gui"
