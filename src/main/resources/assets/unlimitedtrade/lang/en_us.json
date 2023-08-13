@@ -1,0 +1,18 @@
+{
+  "unlimitedtrade.gui.title": "Unlimited Trade Mod",
+  "unlimitedtrade.gui.button.tab.setting": "setting",
+  "unlimitedtrade.config.setting.openConfigGui.name": "open Config Gui",
+  "unlimitedtrade.config.setting.openConfigGui.comment": "Set the shortcut key to open the setting interface",
+  "unlimitedtrade.config.setting.startTrade.pretty_name": "startTrade",
+  "unlimitedtrade.config.setting.startTrade.name": "startTrade",
+  "unlimitedtrade.config.setting.startTrade.comment": "Open unlimited transactions",
+  "unlimitedtrade.config.setting.afterTradeActions.name": "afterTradeActions",
+  "unlimitedtrade.config.setting.afterTradeActions.comment": "Set up post-trade actions",
+  "unlimitedtrade.config.setting.waitChunkDebug.name": "wait Chunk Debug",
+  "unlimitedtrade.config.setting.waitChunkDebug.comment": "If you need a more stable transaction, please install the ChunkDebug module on the server\n to prevent the transaction from being loaded and causing the transaction to be invalid",
+  "unlimitedtrade.config.setting.dropBlockList.name": "drop Block List",
+  "unlimitedtrade.config.setting.dropBlockList.comment": "Limit the type of items that are automatically thrown",
+  "unlimitedtrade.label.afterTradeActions.False": "§coff§r",
+  "unlimitedtrade.label.afterTradeActions.use": "Interact/use blocks",
+  "unlimitedtrade.label.afterTradeActions.use_and_drop": "Interact/use blocks and drop items"
+}

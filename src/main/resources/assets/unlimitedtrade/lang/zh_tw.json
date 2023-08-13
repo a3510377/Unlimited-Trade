@@ -1,0 +1,18 @@
+{
+  "unlimitedtrade.gui.title": "Unlimited Trade 無限交易模組",
+  "unlimitedtrade.gui.button.tab.setting": "設定",
+  "unlimitedtrade.config.setting.openConfigGui.name": "openConfigGui | 開啟設定介面",
+  "unlimitedtrade.config.setting.openConfigGui.comment": "設定開啟設定介面快捷鍵",
+  "unlimitedtrade.config.setting.startTrade.pretty_name": "startTrade | 無限交易",
+  "unlimitedtrade.config.setting.startTrade.name": "startTrade | 無限交易",
+  "unlimitedtrade.config.setting.startTrade.comment": "開啟無限交易",
+  "unlimitedtrade.config.setting.afterTradeActions.name": "afterTradeActions | 交易後動作",
+  "unlimitedtrade.config.setting.afterTradeActions.comment": "設定交易後動作",
+  "unlimitedtrade.config.setting.waitChunkDebug.name": "waitChunkDebug | 等待 Chunk Debug",
+  "unlimitedtrade.config.setting.waitChunkDebug.comment": "若須更穩定的交易，請於伺服器安裝 ChunkDebug 模組\n用於防止交易所加載而造成交易無效",
+  "unlimitedtrade.config.setting.dropBlockList.name": "dropBlockList | 自動拋出黑名單",
+  "unlimitedtrade.config.setting.dropBlockList.comment": "限制自動拋出的物品類型",
+  "unlimitedtrade.label.afterTradeActions.False": "§c關閉§r",
+  "unlimitedtrade.label.afterTradeActions.use": "對方塊交互/使用",
+  "unlimitedtrade.label.afterTradeActions.use_and_drop": "對方塊交互/使用 並拋出購買物"
+}
