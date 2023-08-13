@@ -29,7 +29,7 @@
     "fabricloader": ">=0.12.0",
     "minecraft": "${minecraft_dependency}",
     "malilib": "*",
-    "item-scroller": "*",
+    "itemscroller": "*",
     "magiclib":  "*",
     "fabric-api": "*",
     "java": ">=17"
