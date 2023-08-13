@@ -1,5 +1,5 @@
 {
-  "unlimitedtrade.gui.title": "Unlimited Trade Mod",
+  "unlimitedtrade.gui.title": "Unlimited Trade Mod - %s",
   "unlimitedtrade.gui.button.tab.setting": "setting",
   "unlimitedtrade.config.setting.openConfigGui.name": "open Config Gui",
   "unlimitedtrade.config.setting.openConfigGui.comment": "Set the shortcut key to open the setting interface",

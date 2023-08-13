@@ -1,5 +1,5 @@
 {
-  "unlimitedtrade.gui.title": "Unlimited Trade 无限交易模组",
+  "unlimitedtrade.gui.title": "Unlimited Trade 无限交易模组 - %s",
   "unlimitedtrade.gui.button.tab.setting": "设定",
   "unlimitedtrade.config.setting.openConfigGui.name": "openConfigGui | 开启设定介面",
   "unlimitedtrade.config.setting.openConfigGui.comment": "设定开启设定介面快捷键",
