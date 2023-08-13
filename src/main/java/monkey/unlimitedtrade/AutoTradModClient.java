@@ -5,7 +5,7 @@ import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.unlimitedtrade.config.Configs;
-import monkey.unlimitedtrade.utils.chunkdebug.ChunkData;
+import monkey.unlimitedtrade.config.types.AfterTradeActions;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkdebugApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -66,22 +66,9 @@ public class AutoTradModClient implements ClientModInitializer {
                     }
                 }
             } else if (tradeEntity != null && GuiUtils.getCurrentScreen() instanceof MerchantScreen merchantScreen) {
-                ChunkData data = CHUNK_DEBUG.worldChunks.get(tradeEntity.getChunkPos());
-                Identifier tradeWorld = tradeEntity.getWorld().getRegistryKey().getValue();
-
-                if (CHUNK_DEBUG.getCurrentWorld() == null || !CHUNK_DEBUG.getCurrentWorld().equals(tradeWorld)) {
-                    CHUNK_DEBUG.requestChunkData(tradeWorld);
-
-                    // if server no install chunk debug mod
-                    // client.crosshairTarget != EntityHitResult
-                    if (CHUNK_DEBUG.networkHandler == null) {
-                        this.startTrade(client, merchantScreen);
-                    }
-                } else if (client.player != null && !client.player.isSneaking()) {
-                    // Check for Unlimited Trading Conditions (chunkData.levelType is INACCESSIBLE)
-                    if (data == null || data.levelType() == ChunkLevelType.INACCESSIBLE) {
-                        this.startTrade(client, merchantScreen);
-                    }
+                if (client.player == null || client.player.isSneaking()) return;
+                if (!Configs.waitChunkDebug || CHUNK_DEBUG.worldChunks.get(tradeEntity.getChunkPos()).levelType() == ChunkLevelType.INACCESSIBLE) {
+                    this.startTrade(client, merchantScreen);
                 }
             }
         });
@@ -91,24 +78,35 @@ public class AutoTradModClient implements ClientModInitializer {
         MerchantScreenHandler handler = merchantScreen.getScreenHandler();
         IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
 
-        if (!favorites.isEmpty()) return;
+        if (favorites.isEmpty()) return;
 
         InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
 
         // drop all sell item
-        for (int index = 0; index < favorites.size(); ++index) {
-            Item sellItem = handler.getRecipes().get(index).getSellItem().getItem();
+        if (Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
+            for (int index = 0; index < favorites.size(); ++index) {
+                Item sellItem = handler.getRecipes().get(index).getSellItem().getItem();
 
-            for (Slot slot : handler.slots) {
-                if (slot.getStack().getItem().equals(sellItem)) {
-                    InventoryUtils.dropStack(merchantScreen, slot.id);
+                LOGGER.info(sellItem.getName().toString());
+                if (Configs.dropBlockList.contains(sellItem.getName().toString())) {
+                    continue;
+                }
+
+                for (Slot slot : handler.slots) {
+                    if (slot.getStack().getItem().equals(sellItem)) {
+                        InventoryUtils.dropStack(merchantScreen, slot.id);
+                    }
                 }
             }
         }
 
         merchantScreen.close();
-        if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-            client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult);
+
+        // interact block
+        if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
+            if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
+                client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult);
+            }
         }
     }
 }

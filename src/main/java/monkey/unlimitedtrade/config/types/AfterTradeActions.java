@@ -1,7 +1,7 @@
 package monkey.unlimitedtrade.config.types;
 
 public enum AfterTradeActions implements BaseType {
-    USE, USE_AND_DROP, FILL_CONTAINER;
+    OFF, USE, USE_AND_DROP;
 
     public static final AfterTradeActions DEFAULT = USE_AND_DROP;
 

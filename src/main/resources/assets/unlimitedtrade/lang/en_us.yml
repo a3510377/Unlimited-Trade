@@ -1,27 +1,27 @@
 unlimitedtrade:
   gui:
-    title: "Unlimited Trade Mod"
+    title: "Unlimited Trade 无限交易模组"
     button.tab:
-      setting: "setting"
+      setting: "设定"
   config.setting:
     openConfigGui:
-      name: "open config gui"
-      comment: "設定開啟設定介面快捷鍵"
+      name: "open Config Gui"
+      comment: "Set the shortcut key to open the setting interface"
     startTrade:
-      pretty_name: "start trade"
+      pretty_name: "startTrade"
       name: "startTrade"
-      comment: "開啟無限交易"
+      comment: "Open unlimited transactions"
     afterTradeActions:
-      name: "after trade actions"
-      comment: "設定交易後動作\n"
+      name: "afterTradeActions"
+      comment: "Set up post-trade actions"
     waitChunkDebug:
-      name: "wait chunk debug"
-      comment: "若須更穩定的交易，請於伺服器安裝 ChunkDebug 模組\n用於防止交易所加載而造成交易無效"
+      name: "wait Chunk Debug"
+      comment: "If you need a more stable transaction, please install the ChunkDebug module on the server\n to prevent the transaction from being loaded and causing the transaction to be invalid"
     dropBlockList:
-      name: "drop block list"
-      comment: "限制自動拋出的物品類型"
+      name: "drop Block List"
+      comment: "Limit the type of items that are automatically thrown"
   label:
     afterTradeActions:
-      use: "對方塊交互/使用"
-      use_and_drop: "對方塊交互/使用 並拋出購買物"
-      fill_container: "將購買物放入容器中"
+      off: "\u00a7coff\u00a7r"
+      use: "Interact/use blocks"
+      use_and_drop: "Interact/use blocks and drop items"

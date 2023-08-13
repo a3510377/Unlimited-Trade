@@ -13,7 +13,7 @@ unlimitedtrade:
       comment: "開啟無限交易"
     afterTradeActions:
       name: "afterTradeActions | 交易後動作"
-      comment: "設定交易後動作\n"
+      comment: "設定交易後動作"
     waitChunkDebug:
       name: "waitChunkDebug | 等待 Chunk Debug"
       comment: "若須更穩定的交易，請於伺服器安裝 ChunkDebug 模組\n用於防止交易所加載而造成交易無效"
@@ -22,6 +22,6 @@ unlimitedtrade:
       comment: "限制自動拋出的物品類型"
   label:
     afterTradeActions:
+      off: "\u00a7c關閉\u00a7r"
       use: "對方塊交互/使用"
       use_and_drop: "對方塊交互/使用 並拋出購買物"
-      fill_container: "將購買物放入容器中"
