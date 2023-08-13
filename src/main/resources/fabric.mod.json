@@ -26,7 +26,7 @@
     "unlimitedtrademod.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.22",
+    "fabricloader": ">=0.12.0",
     "minecraft": "${minecraft_dependency}",
     "malilib": "*",
     "item-scroller": "*",
