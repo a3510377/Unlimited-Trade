@@ -16,7 +16,6 @@ import net.minecraft.item.Item;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.world.ChunkLevelType;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -106,11 +105,7 @@ public class AutoTradModClient implements ClientModInitializer {
         // interact block
         if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-                for (int i = 0; i < 5; i++) {
-                    if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
-                        break;
-                    }
-                }
+                client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult);
             }
         }
     }
