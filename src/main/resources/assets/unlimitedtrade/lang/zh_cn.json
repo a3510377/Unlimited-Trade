@@ -12,7 +12,7 @@
   "unlimitedtrade.config.setting.waitChunkDebug.comment": "若须更稳定的交易，请于伺服器安装 ChunkDebug 模组\n用于防止交易所加载而造成交易无效",
   "unlimitedtrade.config.setting.dropBlockList.name": "dropBlockList | 自动抛出黑名单",
   "unlimitedtrade.config.setting.dropBlockList.comment": "限制自动抛出的物品类型",
-  "unlimitedtrade.label.afterTradeActions.off": "§bc关闭§r",
+  "unlimitedtrade.label.afterTradeActions.off": "§4§l关闭§r",
   "unlimitedtrade.label.afterTradeActions.use": "对方块交互/使用",
   "unlimitedtrade.label.afterTradeActions.use_and_drop": "对方块交互/使用 并抛出购买物"
 }

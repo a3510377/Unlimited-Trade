@@ -108,21 +108,24 @@ public class AutoTradModClient implements ClientModInitializer {
 
         merchantScreen.close();
 
-        // interact block
-        if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
-            if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-                if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
-                    remainingUseRetries = 0;
-                } else remainingUseRetries--;
-            }
-        }
+        remainingUseRetries = Configs.maxUseRetries;
+        tryInteractBlock(client);
     }
 
+    /**
+     * try interact block
+     *
+     * @param client Minecraft Client
+     */
     private void tryInteractBlock(MinecraftClient client) {
-        if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-            if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
-                remainingUseRetries = 0;
-            } else remainingUseRetries--;
-        } else remainingUseRetries = 0;
+        if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
+            if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
+                if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) != ActionResult.PASS) {
+                    remainingUseRetries--;
+                    return;
+                }
+            }
+        }
+        remainingUseRetries = 0;
     }
 }

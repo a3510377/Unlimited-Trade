@@ -6,6 +6,7 @@ import monkey.unlimitedtrade.gui.ConfigScreen;
 import net.minecraft.client.MinecraftClient;
 import top.hendrixshen.magiclib.malilib.api.annotation.Config;
 import top.hendrixshen.magiclib.malilib.api.annotation.Hotkey;
+import top.hendrixshen.magiclib.malilib.api.annotation.Numeric;
 import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
 
 import java.util.ArrayList;
@@ -36,6 +37,10 @@ public class Configs {
 
     @Config(category = Category.SETTING)
     public static AfterTradeActions afterTradeActions = AfterTradeActions.USE_AND_DROP;
+
+    @Numeric(minValue = 0, maxValue = 100, useSlider = true)
+    @Config(category = Category.SETTING)
+    public static int maxUseRetries = 0;
 
     public static void init(ConfigManager cm) {
         openConfigGui.getKeybind().setCallback(((keyAction, iKeybind) -> {
