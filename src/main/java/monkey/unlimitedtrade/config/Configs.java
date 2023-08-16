@@ -22,7 +22,7 @@ public class Configs {
 
     @Hotkey(hotkey = "C,V")
     @Config(category = Category.SETTING)
-    public static boolean startTrade = false;
+    public static boolean startTrade;
 
     /* ------------------------------ */
     /* ----------- setting ---------- */

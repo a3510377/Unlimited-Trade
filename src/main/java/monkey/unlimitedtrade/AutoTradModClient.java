@@ -34,6 +34,7 @@ public class AutoTradModClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static String VERSION = "unknown";
     public static ChunkdebugApi CHUNK_DEBUG = new ChunkdebugApi();
+    public static int remainingUseRetries = 0;
     @Nullable
     public static MerchantEntity tradeEntity;
 
@@ -48,9 +49,13 @@ public class AutoTradModClient implements ClientModInitializer {
         Configs.init(cm);
 
         START_CLIENT_TICK.register(client -> {
-            if (!Configs.startTrade) return;
+            if (!Configs.startTrade) {
+                remainingUseRetries = 0;
+                return;
+            }
 
-            if (client.crosshairTarget instanceof EntityHitResult hitResult) {
+            if (remainingUseRetries > 0) tryInteractBlock(client);
+            else if (client.crosshairTarget instanceof EntityHitResult hitResult) {
                 if (hitResult.getEntity() instanceof MerchantEntity merchantEntity) {
                     tradeEntity = merchantEntity;
                     Identifier world = tradeEntity.getWorld().getRegistryKey().getValue();
@@ -106,12 +111,18 @@ public class AutoTradModClient implements ClientModInitializer {
         // interact block
         if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-                for (int i = 0; i < 5; i++) {
-                    if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
-                        break;
-                    }
-                }
+                if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
+                    remainingUseRetries = 0;
+                } else remainingUseRetries--;
             }
         }
+    }
+
+    private void tryInteractBlock(MinecraftClient client) {
+        if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
+            if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) == ActionResult.PASS) {
+                remainingUseRetries = 0;
+            } else remainingUseRetries--;
+        } else remainingUseRetries = 0;
     }
 }
