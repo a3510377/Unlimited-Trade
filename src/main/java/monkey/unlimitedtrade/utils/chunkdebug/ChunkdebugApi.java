@@ -7,10 +7,10 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -76,7 +76,7 @@ public class ChunkdebugApi {
             return;
         }
 
-        Identifier worldIdentify = RegistryKey.of(RegistryKeys.WORLD, new Identifier(world)).getValue();
+        Identifier worldIdentify = RegistryKey.of(Registry.WORLD_KEY, new Identifier(world)).getValue();
         if (this.currentWorld == null || !this.currentWorld.equals(worldIdentify)) {
             this.currentWorld = worldIdentify;
         }

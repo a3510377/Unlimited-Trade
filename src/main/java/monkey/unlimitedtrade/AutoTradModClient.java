@@ -120,7 +120,7 @@ public class AutoTradModClient implements ClientModInitializer {
     private void tryInteractBlock(MinecraftClient client) {
         if (Configs.afterTradeActions == AfterTradeActions.USE || Configs.afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             if (client.crosshairTarget instanceof BlockHitResult hitResult && client.interactionManager != null) {
-                if (client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, hitResult) != ActionResult.PASS) {
+                if (client.interactionManager.interactBlock(client.player, client.world, Hand.MAIN_HAND, hitResult) != ActionResult.PASS) {
                     remainingUseRetries--;
                     return;
                 }
