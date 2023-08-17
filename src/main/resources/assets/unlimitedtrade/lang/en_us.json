@@ -12,7 +12,9 @@
   "unlimitedtrade.config.setting.waitChunkDebug.comment": "If you need a more stable transaction, please install the ChunkDebug module on the server\n to prevent the transaction from being loaded and causing the transaction to be invalid",
   "unlimitedtrade.config.setting.dropBlockList.name": "drop Block List",
   "unlimitedtrade.config.setting.dropBlockList.comment": "Limit the type of items that are automatically thrown",
-  "unlimitedtrade.label.afterTradeActions.off": "§4§loff§r",
+  "unlimitedtrade.config.setting.maxUseRetries.name": "Maximum number of post-transaction retries",
+  "unlimitedtrade.config.setting.maxUseRetries.comment": "Set max post-trade action max attempts",
+  "unlimitedtrade.label.afterTradeActions.off": "§4off§r",
   "unlimitedtrade.label.afterTradeActions.use": "Interact/use blocks",
   "unlimitedtrade.label.afterTradeActions.use_and_drop": "Interact/use blocks and drop items"
 }
