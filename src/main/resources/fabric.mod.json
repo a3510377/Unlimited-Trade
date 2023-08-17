@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "id": "unlimitedtrade",
   "version": "${version}",
-  "name": "UnlimitedTrade",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Unlimited Trade",
+  "description": "An automatic & stable fully automatic unlimited trading module",
   "authors": [
     "a3510377"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/a3510377/Unlimited-Trade",
+    "sources": "https://github.com/a3510377/Unlimited-Trade"
   },
   "license": "CC0-1.0",
   "icon": "assets/unlimitedtrade/icon.png",
@@ -30,8 +30,8 @@
     "minecraft": "${minecraft_dependency}",
     "malilib": "*",
     "itemscroller": "*",
-    "magiclib":  "*",
     "fabric-api": "*",
+    "magiclib": ">=0.7.0",
     "java": ">=17"
   },
   "suggests": {
