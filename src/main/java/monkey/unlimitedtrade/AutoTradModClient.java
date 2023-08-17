@@ -3,7 +3,6 @@ package monkey.unlimitedtrade;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import fi.dy.masa.malilib.util.GuiUtils;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.unlimitedtrade.config.Configs;
 import monkey.unlimitedtrade.config.types.AfterTradeActions;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkdebugApi;
@@ -26,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.hendrixshen.magiclib.malilib.impl.ConfigHandler;
 import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
+
+import java.util.List;
 
 import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.START_CLIENT_TICK;
 
@@ -58,7 +59,7 @@ public class AutoTradModClient implements ClientModInitializer {
             else if (client.crosshairTarget instanceof EntityHitResult hitResult) {
                 if (hitResult.getEntity() instanceof MerchantEntity merchantEntity) {
                     tradeEntity = merchantEntity;
-                    Identifier world = tradeEntity.getWorld().getRegistryKey().getValue();
+                    Identifier world = tradeEntity.world.getRegistryKey().getValue();
 
                     if (client.interactionManager != null && client.player != null && GuiUtils.getCurrentScreen() == null) {
                         if (client.player.getPos().isInRange(tradeEntity.getPos(), 2)) {
@@ -82,7 +83,7 @@ public class AutoTradModClient implements ClientModInitializer {
 
     public void startTrade(MinecraftClient client, MerchantScreen merchantScreen) {
         MerchantScreenHandler handler = merchantScreen.getScreenHandler();
-        IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
+        List<Integer> favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
 
         if (favorites.isEmpty()) return;
 
@@ -106,7 +107,10 @@ public class AutoTradModClient implements ClientModInitializer {
             }
         }
 
-        merchantScreen.close();
+        if (client.player != null) {
+            client.player.closeHandledScreen();
+        }
+        client.setScreen(null);
 
         remainingUseRetries = Configs.maxUseRetries;
         tryInteractBlock(client);

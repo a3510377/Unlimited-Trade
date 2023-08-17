@@ -46,7 +46,7 @@ dependencies {
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-    modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "curse.maven:malilib-303119:${project.malilib_file_id}"
     modImplementation "curse.maven:item-scroller-242064:${project.item_scroller_file_id}"
