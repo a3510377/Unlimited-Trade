@@ -15,7 +15,7 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.item.Item;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.world.ChunkLevelType;
+import net.minecraft.server.world.ChunkHolder.LevelType;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -73,7 +73,7 @@ public class AutoTradModClient implements ClientModInitializer {
                 }
             } else if (tradeEntity != null && GuiUtils.getCurrentScreen() instanceof MerchantScreen merchantScreen) {
                 if (client.player == null || client.player.isSneaking()) return;
-                if (!Configs.waitChunkDebug || CHUNK_DEBUG.worldChunks.get(tradeEntity.getChunkPos()).levelType() == ChunkLevelType.INACCESSIBLE) {
+                if (!Configs.waitChunkDebug || CHUNK_DEBUG.worldChunks.get(tradeEntity.getChunkPos()).levelType() == LevelType.INACCESSIBLE) {
                     this.startTrade(client, merchantScreen);
                 }
             }
