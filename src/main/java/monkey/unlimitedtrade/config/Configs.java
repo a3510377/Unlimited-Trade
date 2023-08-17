@@ -40,7 +40,7 @@ public class Configs {
 
     @Numeric(minValue = 0, maxValue = 100, useSlider = true)
     @Config(category = Category.SETTING)
-    public static int maxUseRetries = 0;
+    public static int maxUseRetries = 20;
 
     public static void init(ConfigManager cm) {
         openConfigGui.getKeybind().setCallback(((keyAction, iKeybind) -> {
