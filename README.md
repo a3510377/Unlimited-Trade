@@ -19,7 +19,7 @@ It is allowed to add Debug Chunk Mod to the server to achieve a more stable unli
 
 ## Development
 
-#### supper
+#### Support
 
 Current main development for Minecraft version: `1.20.1`
 
