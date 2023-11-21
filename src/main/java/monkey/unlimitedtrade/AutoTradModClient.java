@@ -24,8 +24,6 @@ import net.minecraft.util.hit.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.hendrixshen.magiclib.malilib.impl.ConfigHandler;
-import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
 
 import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.START_CLIENT_TICK;
 
@@ -42,11 +40,7 @@ public class AutoTradModClient implements ClientModInitializer {
     public void onInitializeClient() {
         VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
 
-        ConfigManager cm = ConfigManager.get(MOD_ID);
-        cm.parseConfigClass(Configs.class);
-        ConfigHandler configHandler = new ConfigHandler(MOD_ID, cm, Configs.VERSION);
-        ConfigHandler.register(configHandler);
-        Configs.init(cm);
+        Configs.register();
 
         START_CLIENT_TICK.register(client -> {
             if (!Configs.startTrade) {
