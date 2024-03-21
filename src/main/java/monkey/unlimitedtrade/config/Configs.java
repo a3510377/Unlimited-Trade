@@ -1,58 +1,83 @@
 package monkey.unlimitedtrade.config;
 
-import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import fi.dy.masa.malilib.config.ConfigManager;
+import fi.dy.masa.malilib.event.InitializationHandler;
+import fi.dy.masa.malilib.event.InputEventHandler;
+import monkey.unlimitedtrade.AutoTradeModClient;
+import monkey.unlimitedtrade.config.options.*;
 import monkey.unlimitedtrade.config.types.AfterTradeActions;
-import monkey.unlimitedtrade.gui.ConfigScreen;
-import net.minecraft.client.MinecraftClient;
-import top.hendrixshen.magiclib.malilib.api.annotation.Config;
-import top.hendrixshen.magiclib.malilib.api.annotation.Hotkey;
-import top.hendrixshen.magiclib.malilib.api.annotation.Numeric;
-import top.hendrixshen.magiclib.malilib.impl.ConfigManager;
+import monkey.unlimitedtrade.gui.AutoTradGuiConfigsBase;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Configs {
     public static final int VERSION = 1;
+    public static final List<AutoTradeConfigOption> OPTIONS = new ArrayList<>();
+    public static final Map<Config.Category, List<AutoTradeConfigOption>> CATEGORY_TO_OPTION = Maps.newLinkedHashMap();
 
     /* ------------------------------ */
     /* ----------- Hot Key ---------- */
     /* ------------------------------ */
-    @Hotkey(hotkey = "V,B")
-    @Config(category = Category.SETTING)
-    public static ConfigHotkey openConfigGui;
-
-    @Hotkey(hotkey = "C,V")
-    @Config(category = Category.SETTING)
-    public static boolean startTrade;
+//    @Hotkey(hotkey = "V,B")
+    @Config(category = Config.Category.SETTING)
+    public static AutoTradeHotKeyed openConfigGui = new AutoTradeHotKeyed("openConfigGui", "V,B");
 
     /* ------------------------------ */
     /* ----------- setting ---------- */
     /* ------------------------------ */
+    @Config(category = Config.Category.SETTING)
+    public static AutoTradeBooleanHotKeyed startTrade = new AutoTradeBooleanHotKeyed("startTrade", "C,V");
+    @Config(category = Config.Category.SETTING)
+    public static AutoTradeBooleanHotKeyed waitChunkDebug = new AutoTradeBooleanHotKeyed("waitChunkDebug", "");
+    @Config(category = Config.Category.SETTING)
+    public static AutoTradeStringList dropBlockList = new AutoTradeStringList(
+            "dropBlockList",
+            ImmutableList.copyOf(new ArrayList<>()));
+    @Config(category = Config.Category.SETTING)
+    public static AutoTradeOptionList afterTradeActions = new AutoTradeOptionList(
+            "afterTradeActions",
+            AfterTradeActions.USE_AND_DROP);
 
-    @Config(category = Category.SETTING)
-    public static boolean waitChunkDebug = true;
+    static {
+        for (Field field : Configs.class.getDeclaredFields()) {
+            Config annotation = field.getAnnotation(Config.class);
+            if (annotation != null) {
+                try {
+                    Object config = field.get(null);
+                    if (!(config instanceof AutoTradeIConfigBase)) {
+                        AutoTradeModClient.LOGGER.warn("{} is not subclass of AutoTradeIConfigBase", config);
+                        continue;
+                    }
 
-    @Config(category = Category.SETTING)
-    public static ArrayList<String> dropBlockList = new ArrayList<>();
+                    AutoTradeConfigOption option = new AutoTradeConfigOption(annotation, (AutoTradeIConfigBase) config);
+                    OPTIONS.add(option);
+                    CATEGORY_TO_OPTION.computeIfAbsent(option.getCategory(), k -> Lists.newArrayList()).add(option);
+                } catch (IllegalAccessException e) {
+                    //noinspection CallToPrintStackTrace
+                    e.printStackTrace();
+                }
 
-    @Config(category = Category.SETTING)
-    public static AfterTradeActions afterTradeActions = AfterTradeActions.USE_AND_DROP;
-
-    @Numeric(minValue = 0, maxValue = 100, useSlider = true)
-    @Config(category = Category.SETTING)
-    public static int maxUseRetries = 20;
-
-    public static void init(ConfigManager cm) {
-        openConfigGui.getKeybind().setCallback(((keyAction, iKeybind) -> {
-            ConfigScreen screen = ConfigScreen.instance;
-
-            MinecraftClient.getInstance().setScreen(screen);
-
-            return true;
-        }));
+            }
+        }
     }
 
-    public static class Category {
-        public static final String SETTING = "setting";
+    public static void init() {
+        InitializationHandler.getInstance().registerInitializationHandler(() -> {
+            ConfigManager.getInstance().registerConfigHandler(AutoTradeModClient.MOD_ID, AutoTradeConfigStorage.getInstance());
+
+            InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
+
+            openConfigGui.getKeybind().setCallback(((keyAction, iKeybind) -> {
+                AutoTradGuiConfigsBase.openGui();
+
+                return true;
+            }));
+        });
     }
 }

@@ -16,23 +16,20 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "monkey.unlimitedtrade.AutoTradModClient"
+      "monkey.unlimitedtrade.AutoTradeModClient"
     ],
     "modmenu": [
-      "monkey.unlimitedtrade.gui.modmenu.ModMenuApiImpl"
+      "monkey.unlimitedtrade.gui.modmenu.ModMenuImpl"
     ]
   },
   "mixins": [
     "unlimitedtrademod.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.12.0",
+    "fabricloader": ">=0.15.1",
     "minecraft": "${minecraft_dependency}",
-    "malilib": "*",
-    "itemscroller": "*",
-    "fabric-api": "*",
-    "magiclib": ">=0.7.0",
-    "java": ">=17"
+    "malilib": ">=0.10",
+    "itemscroller": "*"
   },
   "suggests": {
     "another-mod": "*"

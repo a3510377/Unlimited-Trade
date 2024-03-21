@@ -1,12 +1,13 @@
 package monkey.unlimitedtrade.utils.chunkdebug;
 
 import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
@@ -17,9 +18,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static monkey.unlimitedtrade.AutoTradModClient.LOGGER;
+import static monkey.unlimitedtrade.AutoTradeModClient.LOGGER;
 
-public class ChunkdebugApi {
+public class ChunkDebugAPI extends BaseChunkDebug {
     public static final Identifier PACKET_ID = new Identifier("essentialclient", "chunkdebug");
     public static final int HELLO = 0,
             DATA = 16,
@@ -29,14 +30,16 @@ public class ChunkdebugApi {
             Update.class,
             callbacks -> (world, chunkData) -> Arrays.stream(callbacks).forEach(callback -> callback.onUpdate(world, chunkData))
     );
-    public final Map<ChunkPos, ChunkData> worldChunks = new HashMap<>();
+    private final Map<ChunkPos, ChunkData> worldChunks = new HashMap<>();
+
     @Nullable
     public ClientPlayNetworkHandler networkHandler;
     @Nullable
     private Identifier currentWorld;
 
-    public ChunkdebugApi() {
-        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, ((client, handler, buf, responseSender) -> this.handlePacket(buf, handler)));
+    public ChunkDebugAPI() {
+        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, (client, handler, buf, responseSender) -> this.handlePacket(buf, handler));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> setCurrentWorld(DUMMY_WORLD));
     }
 
     private void handlePacket(PacketByteBuf buf, ClientPlayNetworkHandler handler) {
@@ -57,9 +60,10 @@ public class ChunkdebugApi {
         this.networkHandler = handler;
         LOGGER.info("Connected to ChunkDebug server");
 
-        handler.sendPacket(new CustomPayloadC2SPacket(
-                PACKET_ID,
-                new PacketByteBuf(Unpooled.buffer()).writeVarInt(HELLO).writeString("v0.1.0").writeVarInt(VERSION)
+        handler.sendPacket(new CustomPayloadC2SPacket(new PacketByteBuf(Unpooled.buffer())
+                .writeVarInt(HELLO)
+                .writeString("v0.1.0")
+                .writeVarInt(VERSION)
         ));
     }
 
@@ -89,34 +93,29 @@ public class ChunkdebugApi {
         this.UPDATE_EVENT.invoker().onUpdate(worldIdentify, worldChunks);
     }
 
-    public void requestChunkData() {
-        this.requestChunkData("minecraft:dummy");
+    @Override
+    public ChunkData getChunkData(ChunkPos chunkPos) {
+        return this.worldChunks.get(chunkPos);
     }
 
-    public void requestChunkData(String world) {
-        this.requestChunkData(new Identifier(world));
+    @Override
+    public void clearChunkData() {
+        this.worldChunks.clear();
     }
 
+    @Override
     public void requestChunkData(Identifier world) {
         if (this.networkHandler == null) {
+            LOGGER.error("run requestChunkData but networkHandler is null");
             return;
         }
 
-        this.setCurrentWorld(world.equals(new Identifier("minecraft:dummy")) ? null : world);
-
-        this.networkHandler.sendPacket(new CustomPayloadC2SPacket(
-                PACKET_ID,
-                new PacketByteBuf(Unpooled.buffer()).writeVarInt(DATA).writeIdentifier(world)
+        this.networkHandler.sendPacket(new CustomPayloadC2SPacket(new PacketByteBuf(Unpooled.buffer())
+                .writeVarInt(DATA)
+                .writeIdentifier(world)
         ));
-    }
 
-    public @Nullable Identifier getCurrentWorld() {
-        return this.currentWorld;
-    }
-
-    private void setCurrentWorld(Identifier world) {
-        this.currentWorld = world;
-        this.worldChunks.clear();
+        super.requestChunkData();
     }
 
     @FunctionalInterface
