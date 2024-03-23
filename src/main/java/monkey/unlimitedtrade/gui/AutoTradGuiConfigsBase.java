@@ -26,7 +26,6 @@ public class AutoTradGuiConfigsBase extends GuiConfigsBase {
 
     public static void openGui() {
         GuiBase.openGui(new AutoTradGuiConfigsBase());
-        AutoTradeModClient.LOGGER.info("open ui test");
     }
 
     @Override

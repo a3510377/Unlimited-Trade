@@ -4,4 +4,6 @@ public interface IChunkData {
     int getPosX();
 
     int getPosZ();
+
+    IChunkType getChunkType();
 }

@@ -36,7 +36,6 @@ public class AutoTradeConfigStorage implements IConfigHandler {
     public void loadFromFile(File configFile) {
         JsonElement element = JsonUtils.parseJsonFile(configFile);
 
-        AutoTradeModClient.LOGGER.info(String.valueOf(element));
         if (element != null && element.isJsonObject()) {
             this.jsonObject = element.getAsJsonObject();
 

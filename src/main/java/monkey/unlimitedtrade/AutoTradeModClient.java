@@ -6,6 +6,7 @@ import fi.dy.masa.malilib.util.GuiUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import monkey.unlimitedtrade.config.Configs;
 import monkey.unlimitedtrade.config.types.AfterTradeActions;
+import monkey.unlimitedtrade.utils.chunkdebug.BaseChunkData;
 import monkey.unlimitedtrade.utils.chunkdebug.BaseChunkDebug;
 import monkey.unlimitedtrade.utils.chunkdebug.ChunkDebugAPI;
 import monkey.unlimitedtrade.utils.chunkdebug.essential.EssentialChunkDebugAPI;
@@ -127,16 +128,21 @@ public class AutoTradeModClient implements ClientModInitializer {
                     }
 
                     // if in listening world != villageOldWorld re-listen
-                    if (CHUNK_DEBUG_API != null && CHUNK_DEBUG_API.getCurrentWorld() != null && !CHUNK_DEBUG_API.getCurrentWorld().equals(world)) {
+                    if (CHUNK_DEBUG_API != null && (CHUNK_DEBUG_API.getCurrentWorld() == null || !CHUNK_DEBUG_API.getCurrentWorld().equals(world))) {
                         CHUNK_DEBUG_API.requestChunkData(world);
                     }
                 }
             } else if (tradeEntity != null && GuiUtils.getCurrentScreen() instanceof MerchantScreen merchantScreen) {
                 if (client.player != null && client.player.isSneaking()) return;
 
-                if (!Configs.waitChunkDebug.getBooleanValue() || CHUNK_DEBUG_API != null &&
-                        CHUNK_DEBUG_API.getChunkData(tradeEntity.getChunkPos()).levelType() == ChunkLevelType.INACCESSIBLE) {
-                    AutoTradeModClient.startTrade(client, merchantScreen);
+                if (!Configs.waitChunkDebug.getBooleanValue() || CHUNK_DEBUG_API != null) {
+                    @Nullable BaseChunkData chunkData = CHUNK_DEBUG_API.getChunkData(tradeEntity.getChunkPos());
+
+                    LOGGER.info(String.valueOf(chunkData));
+                    if (chunkData != null && chunkData.getLevelType() == ChunkLevelType.INACCESSIBLE) {
+                        LOGGER.info("Start");
+                        AutoTradeModClient.startTrade(client, merchantScreen);
+                    }
                 }
             }
         });

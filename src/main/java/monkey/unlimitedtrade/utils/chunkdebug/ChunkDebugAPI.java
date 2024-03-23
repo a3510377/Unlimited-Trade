@@ -87,14 +87,14 @@ public class ChunkDebugAPI extends BaseChunkDebug {
 
         for (int i = 0; i < size; i++) {
             ChunkData chunkData = ChunkData.deserialize(worldIdentify, chunkPositions[i], levelTypes[i], statusTypes[i], ticketTypes[i]);
-            worldChunks.put(chunkData.chunkPos(), chunkData);
+            worldChunks.put(chunkData.getChunkPos(), chunkData);
         }
 
         this.UPDATE_EVENT.invoker().onUpdate(worldIdentify, worldChunks);
     }
 
     @Override
-    public ChunkData getChunkData(ChunkPos chunkPos) {
+    public @Nullable BaseChunkData getChunkData(ChunkPos chunkPos) {
         return this.worldChunks.get(chunkPos);
     }
 

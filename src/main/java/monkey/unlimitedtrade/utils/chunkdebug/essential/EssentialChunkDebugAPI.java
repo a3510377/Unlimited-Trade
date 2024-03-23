@@ -1,8 +1,8 @@
 package monkey.unlimitedtrade.utils.chunkdebug.essential;
 
 import monkey.unlimitedtrade.AutoTradeModClient;
+import monkey.unlimitedtrade.utils.chunkdebug.BaseChunkData;
 import monkey.unlimitedtrade.utils.chunkdebug.BaseChunkDebug;
-import monkey.unlimitedtrade.utils.chunkdebug.ChunkData;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ChunkLevelType;
@@ -12,12 +12,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EssentialChunkDebugAPI extends BaseChunkDebug {
     @Nullable Class<?> essentialClientClass;
     @Nullable Class<IChunkHandler> chunkHandlerClass;
+    @Nullable Class<IChunkTypeEnum> chunkTypeEnumClass;
+    Map<Object, Integer> chunkTypeEnumMaps = new HashMap<>();
 
     @Nullable Method clearAllChunksMethod;
     @Nullable Method getChunksMethod;
@@ -32,6 +34,16 @@ public class EssentialChunkDebugAPI extends BaseChunkDebug {
             essentialClientClass = Class.forName("me.senseiwells.essentialclient.EssentialClient");
             //noinspection unchecked
             chunkHandlerClass = (Class<IChunkHandler>) Class.forName("me.senseiwells.essentialclient.feature.chunkdebug.ChunkHandler");
+            //noinspection unchecked
+            chunkTypeEnumClass = (Class<IChunkTypeEnum>) Class.forName("me.senseiwells.essentialclient.feature.chunkdebug.ChunkType");
+            if (chunkTypeEnumClass.isEnum()) {
+                Object[] values = (Object[]) chunkTypeEnumClass.getMethod("values").invoke(chunkTypeEnumClass);
+
+                int i = 0;
+                for (Object value : values) {
+                    chunkTypeEnumMaps.put(value, i++);
+                }
+            }
 
             clearAllChunksMethod = chunkHandlerClass.getMethod("clearAllChunks");
             getChunksMethod = chunkHandlerClass.getMethod("getChunks", RegistryKey.class);
@@ -57,36 +69,27 @@ public class EssentialChunkDebugAPI extends BaseChunkDebug {
         }
     }
 
-    public List<ChunkData> objectToChunkData(Identifier world, Object[] chunkData) {
-        List<ChunkData> result = new ArrayList<>();
+    public BaseChunkData objectToChunkData(Identifier world, Object chunkData) {
+        try {
+            //noinspection unchecked
+            Class<IChunkData> chunkDataCls = (Class<IChunkData>) chunkData.getClass();
 
-        for (Object data : chunkData) {
-            try {
-                //noinspection unchecked
-                Class<IChunkData> chunkDataCls = (Class<IChunkData>) data.getClass();
+            int x = (int) chunkDataCls.getMethod("getPosX").invoke(chunkData);
+            int y = (int) chunkDataCls.getMethod("getPosZ").invoke(chunkData);
 
-                int x = (int) chunkDataCls.getMethod("getPosX").invoke(data);
-                int y = (int) chunkDataCls.getMethod("getPosZ").invoke(data);
-
-                result.add(new ChunkData(
-                        new ChunkPos(x, y),
-                        ChunkLevelType.INACCESSIBLE,
-                        (byte) 0,
-                        (byte) 0,
-                        world));
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
+            Object chunkTypeClass = chunkDataCls.getMethod("getChunkType").invoke(chunkData);
+            int chunkLevelTypeIndex = chunkTypeEnumMaps.getOrDefault(chunkTypeClass, -1);
+            return new BaseChunkData(new ChunkPos(x, y), ChunkLevelType.values()[chunkLevelTypeIndex], world);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
         }
-
-        return result;
     }
 
-    public List<ChunkData> getChunks() {
+    public Object[] getChunks() {
         if (getChunksMethod == null) return null;
 
         try {
-            return objectToChunkData(getCurrentWorld(), (Object[]) getChunksMethod.invoke(chunkHandlerClass, RegistryKey.of(RegistryKeys.WORLD, getCurrentWorld())));
+            return (Object[]) getChunksMethod.invoke(chunkHandlerClass, RegistryKey.of(RegistryKeys.WORLD, getCurrentWorld()));
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
@@ -98,12 +101,12 @@ public class EssentialChunkDebugAPI extends BaseChunkDebug {
     }
 
     @Override
-    public ChunkData getChunkData(ChunkPos chunkPos) {
-        List<ChunkData> chunkData = getChunks();
+    public @Nullable BaseChunkData getChunkData(ChunkPos chunkPos) {
+        for (Object chunkObject : getChunks()) {
+            BaseChunkData chunkData = objectToChunkData(getCurrentWorld(), chunkObject);
 
-        for (ChunkData chunk : chunkData) {
-            if (chunkPos.equals(chunk.chunkPos())) {
-                return chunk;
+            if (chunkPos.equals(chunkData.getChunkPos())) {
+                return chunkData;
             }
         }
 
@@ -123,9 +126,11 @@ public class EssentialChunkDebugAPI extends BaseChunkDebug {
                 if (this.removeChunkDataMethod == null) {
                     AutoTradeModClient.LOGGER.error("run EssentialChunkDebug but removeChunkDataMethod is null");
                 } else {
+                    AutoTradeModClient.LOGGER.debug("remove chunk data of world: {}", world);
                     this.removeChunkDataMethod.invoke(chunkClientNetworkHandler);
                 }
             } else if (this.requestChunkDataMethod != null) {
+                AutoTradeModClient.LOGGER.debug("request chunk data of world: {}", world);
                 this.requestChunkDataMethod.invoke(chunkClientNetworkHandler, RegistryKey.of(RegistryKeys.WORLD, world));
             } else {
                 AutoTradeModClient.LOGGER.error("run EssentialChunkDebug but requestChunkDataMethod is null");

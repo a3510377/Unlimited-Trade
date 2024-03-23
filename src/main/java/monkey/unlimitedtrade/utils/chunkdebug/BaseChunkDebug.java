@@ -26,7 +26,7 @@ public abstract class BaseChunkDebug {
 
     public abstract void clearChunkData();
 
-    public abstract ChunkData getChunkData(ChunkPos chunkPos);
+    public abstract @Nullable BaseChunkData getChunkData(ChunkPos chunkPos);
 
     public @Nullable Identifier getCurrentWorld() {
         return this.currentWorld;
