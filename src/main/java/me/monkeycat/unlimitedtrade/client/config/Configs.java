@@ -11,8 +11,12 @@ import fi.dy.masa.malilib.util.restrictions.ItemRestriction;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
 import me.monkeycat.unlimitedtrade.client.config.gui.CustomConfigBaseGUI;
-import me.monkeycat.unlimitedtrade.client.config.options.*;
+import me.monkeycat.unlimitedtrade.client.config.options.CustomConfigHotkey;
+import me.monkeycat.unlimitedtrade.client.config.options.CustomConfigOptionList;
+import me.monkeycat.unlimitedtrade.client.config.options.CustomConfigStringList;
+import me.monkeycat.unlimitedtrade.client.config.options.UnlimitedTradeIConfigBase;
 import me.monkeycat.unlimitedtrade.client.config.types.AfterTradeActions;
+import me.monkeycat.unlimitedtrade.client.config.types.WaitProtoTypes;
 import net.minecraft.item.Items;
 
 import java.lang.reflect.Field;
@@ -31,13 +35,13 @@ public class Configs {
     public static final CustomConfigHotkey OPEN_CONFIG_GUI = newConfigHotKey("openConfigGui", "V,B");
     @Config(type = Config.Type.HOTKEY, category = Config.Category.SETTING)
     public static final CustomConfigHotkey START_TRADE = newConfigHotKey("startTrade", "C,V");
-    @Config(type = Config.Type.HOTKEY, category = Config.Category.SETTING)
-    public static final CustomConfigBoolHotkey WAIT_CHUNKDEBUG = newConfigBoolHotkey("waitChunkDebug", true, "");
     @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
     public static final CustomConfigStringList DROP_BLOCK_LIST = newConfigStringList("dropBlockList", ImmutableList.of(Items.EMERALD.toString()));
     public static final ItemRestriction DROP_BLOCK_LIST_RESTRICTION = new ItemRestriction();
     @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
     public static final CustomConfigOptionList AFTER_TRADE_ACTIONS = newConfigOptionList("afterTradeActions", AfterTradeActions.OFF.getDefault());
+    @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
+    public static final CustomConfigOptionList WAIT_PROTO_TYPE = newConfigOptionList("waitProtoType", WaitProtoTypes.AUTO.getDefault());
 
     static {
         for (Field field : Configs.class.getDeclaredFields()) {

@@ -40,8 +40,7 @@ public class CustomConfigStorage implements IConfigHandler {
             this.jsonObject = element.getAsJsonObject();
 
             for (Config.Category category : Config.Category.values()) {
-                List<UnlimitedTradeIConfigBase> configs = CATEGORY_TO_OPTION.get(category).stream()
-                        .map(CustomConfigOption::config).collect(Collectors.toList());
+                List<UnlimitedTradeIConfigBase> configs = CATEGORY_TO_OPTION.get(category).stream().map(CustomConfigOption::config).collect(Collectors.toList());
                 ConfigUtils.readConfigBase(jsonObject, category.name(), configs);
             }
         } else save();
@@ -51,8 +50,7 @@ public class CustomConfigStorage implements IConfigHandler {
     @Override
     public void save() {
         for (Config.Category category : Config.Category.values()) {
-            List<UnlimitedTradeIConfigBase> configs = CATEGORY_TO_OPTION.get(category).stream()
-                    .map(CustomConfigOption::config).collect(Collectors.toList());
+            List<UnlimitedTradeIConfigBase> configs = CATEGORY_TO_OPTION.get(category).stream().map(CustomConfigOption::config).collect(Collectors.toList());
             ConfigUtils.writeConfigBase(jsonObject, category.name(), configs);
         }
 
