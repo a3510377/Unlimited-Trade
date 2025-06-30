@@ -36,7 +36,6 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         } else chunkDataAPI = new ChunkDebugFromNetwork();
 
 
-        BaseChunkDebugFrom chunkDataAPI = getChunkDataAPI();
         START_CLIENT_TICK.register(this::tickHandle);
     }
 
