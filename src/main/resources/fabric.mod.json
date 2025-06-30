@@ -13,25 +13,27 @@
   },
   "license": "CC0-1.0",
   "icon": "assets/unlimitedtrade/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
+    "main": [
+      "me.monkeycat.unlimitedtrade.UnlimitedTradeMod"
+    ],
     "client": [
-      "monkey.unlimitedtrade.AutoTradeModClient"
+      "me.monkeycat.unlimitedtrade.client.UnlimitedTradeModClient"
     ],
     "modmenu": [
-      "monkey.unlimitedtrade.gui.modmenu.ModMenuImpl"
+      "me.monkeycat.unlimitedtrade.client.config.gui.modmenu.ModMenuImpl"
     ]
   },
   "mixins": [
-    "unlimitedtrademod.mixins.json"
+    "unlimitedtrademod.client.mixins.json",
+    "unlimitedtrademod.server.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.15.1",
+    "fabricloader": ">=0.15.0",
     "minecraft": "${minecraft_dependency}",
-    "malilib": ">=0.10",
-    "itemscroller": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "malilib": "${malilib_dependency}",
+    "itemscroller": "*",
+    "conditional-mixin": ">=0.2.0"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "me.monkeycat.unlimitedtrade.client.mixin",
+  "plugin": "me.monkeycat.unlimitedtrade.client.utils.chunkdebug.ChunkDebugMixinPlugin",
+  "compatibilityLevel": "{{COMPATIBILITY_LEVEL}}",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "TradeMixin"
+  ]
+}

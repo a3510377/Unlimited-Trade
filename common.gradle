@@ -5,10 +5,6 @@ apply plugin: 'me.fallenbreath.yamlang'
 
 int mcVersion = project.mcVersion
 
-preprocess {
-    tabIndentation = true
-}
-
 repositories {
     maven {
         url 'https://jitpack.io'
@@ -40,24 +36,44 @@ configurations {
     modRuntimeOnly.exclude group: 'net.fabricmc', module: 'fabric-loader'
 }
 
+static String curseForgeOrOther(version, curseForge, other) {
+    return ((version as String) ==~ /\d+/ ? curseForge : other) + ':' + version
+}
+
+// list of (dependencyNotation -> should use modImplementation)
+def mod_dependencies = [[mcVersion >= 12101 ? "com.github.sakura-ryoko:malilib:${project.malilib_version}" : "fi.dy.masa.malilib:${project.malilib_version}", true],
+                        [curseForgeOrOther(project.itemscroller_file_id, 'curse.maven:item-scroller-242064', 'com.github.sakura-ryoko:itemscroller'), true],
+                        ["maven.modrinth:chunk-debug:${project.chunk_debug_version}", true],
+                        // we're using modmenu for mc 1.15.2 for 1.14.4, so we use modCompileOnly
+                        ["com.terraformersmc:modmenu:${project.mod_menu_version}", mcVersion >= 11500 && mcVersion < 12106],]
+
 dependencies {
     // loom
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     // runtime mods
     // modRuntimeOnly "com.github.gnembon:fabric-carpet:${project.carpet_version}"
 
-    // dependencies
-    include modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
-    include modImplementation("curse.maven:malilib-303119:${project.malilib_file_id}")
-    include modImplementation("curse.maven:item-scroller-242064:${project.item_scroller_file_id}")
+    mod_dependencies.forEach { item ->
+        def dependencyNotation = item[0]
+        def activatedInRuntime = item[1]
+        if (activatedInRuntime) {
+            modImplementation(dependencyNotation) {
+                exclude group: 'com.github.sakura-ryoko', module: 'malilib'
+            }
+        } else {
+            modCompileOnly(dependencyNotation) {
+                exclude group: 'com.github.sakura-ryoko', module: 'malilib'
+            }
+        }
+    }
 
-    include modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+    include(modImplementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:${project.conditionalmixin_version}"))
 }
 
-String MIXIN_CONFIG_PATH = 'unlimitedtrademod.mixins.json'
 String LANG_DIR = 'assets/unlimitedtrade/lang'
 JavaVersion JAVA_COMPATIBILITY
 if (mcVersion >= 11800) {
@@ -73,6 +89,7 @@ loom {
         runDir '../../run'
         vmArgs '-Dmixin.debug.export=true'
     }
+
 //	// [FEATURE] MIXIN_AUDITOR
 //	runs {
 //		serverMixinAudit {
@@ -83,45 +100,62 @@ loom {
 //	}
 }
 
-remapJar {
-    remapperIsolation = true
-}
+String modVersionSuffix = ''
+String fullProjectVersion
 
-String versionSuffix = ''
+// Example version values:
+//   project.mod_version     1.0.3                      (the base mod version)
+//   modVersionSuffix        +build.88                  (use github action build number if possible)
+//   fullModVersion          1.0.3+build.88             (the actual mod version to use in the mod)
+//   fullProjectVersion      v1.0.3-mc1.15.2+build.88   (in build output jar name)
+
 // detect github action environment variables
 // https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
 if (System.getenv("BUILD_RELEASE") != "true") {
     String buildNumber = System.getenv("BUILD_ID")
-    versionSuffix += buildNumber != null ? ('+build.' + buildNumber) : '-SNAPSHOT'
+    modVersionSuffix += buildNumber != null ? ('+build.' + buildNumber) : '-SNAPSHOT'
 }
-String fullModVersion = project.mod_version + versionSuffix
+String fullModVersion = project.mod_version + modVersionSuffix
 
 group = project.maven_group
 if (System.getenv("JITPACK") == "true") {
     // move mc version into archivesBaseName, so jitpack will be able to organize archives from multiple subprojects correctly
     base.archivesName = project.archives_base_name + '-mc' + project.minecraft_version
-    version = 'v' + fullModVersion
+    fullProjectVersion = 'v' + project.mod_version + modVersionSuffix
 } else {
     base.archivesName = project.archives_base_name
-    version = 'mc' + project.minecraft_version + '-v' + fullModVersion
+    fullProjectVersion = 'v' + project.mod_version + '-mc' + project.minecraft_version + modVersionSuffix
 }
+version = fullProjectVersion
 
-// See https://youtrack.jetbrains.com/issue/IDEA-296490
-// if IDEA complains about "Cannot resolve resource filtering of MatchingCopyAction" and you want to know why
+def MIXIN_CONFIG_PATHS = ["unlimitedtrademod.client.mixins.json",
+                          "unlimitedtrademod.server.mixins.json",
+                          "unlimitedtrademod.chunkdebug.mixins.json"]
+
 processResources {
+    inputs.property "id", project.mod_id
+    inputs.property "name", project.mod_name
     inputs.property "version", fullModVersion
     inputs.property "minecraft_dependency", project.minecraft_dependency
 
     filesMatching("fabric.mod.json") {
-        def valueMap = [
-                "version"             : fullModVersion,
-                "minecraft_dependency": project.minecraft_dependency,
-        ]
+        def valueMap = ["id"                  : project.mod_id,
+                        "name"                : project.mod_name,
+                        "version"             : fullModVersion,
+                        "minecraft_dependency": project.minecraft_dependency,
+                        "malilib_dependency"  : project.malilib_dependency]
         expand valueMap
     }
 
-    filesMatching(MIXIN_CONFIG_PATH) {
-        filter { s -> s.replace('{{COMPATIBILITY_LEVEL}}', "JAVA_${JAVA_COMPATIBILITY.ordinal() + 1}") }
+    filesMatching("unlimitedtrademod.chunkdebug.mixins.json") {
+        def valueMap = ["archivesBaseName": archivesBaseName,]
+        expand valueMap
+    }
+
+    MIXIN_CONFIG_PATHS.each { mixinConfigPath ->
+        filesMatching(mixinConfigPath) {
+            filter { s -> s.replace('{{COMPATIBILITY_LEVEL}}', "JAVA_${JAVA_COMPATIBILITY.ordinal() + 1}") }
+        }
     }
 }
 
@@ -137,6 +171,10 @@ yamlang {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    if (JAVA_COMPATIBILITY <= JavaVersion.VERSION_1_8) {
+        // suppressed "source/target value 8 is obsolete and will be removed in a future release"
+        options.compilerArgs << '-Xlint:-options'
+    }
 }
 
 java {
@@ -152,68 +190,5 @@ java {
 jar {
     from(rootProject.file('LICENSE')) {
         rename { "${it}_${project.archives_base_name}" }
-    }
-}
-
-// https://github.com/hierynomus/license-gradle-plugin
-//license {
-//    // use "gradle licenseFormat" to apply license headers
-//    header = rootProject.file('HEADER.txt')
-//    include '**/*.java'
-//    skipExistingHeaders = true
-//
-//    headerDefinitions {
-//        // ref: https://github.com/mathieucarbou/license-maven-plugin/blob/4c42374bb737378f5022a3a36849d5e23ac326ea/license-maven-plugin/src/main/java/com/mycila/maven/plugin/license/header/HeaderType.java#L48
-//        // modification: add a newline at the end
-//        SLASHSTAR_STYLE_NEWLINE {
-//            firstLine = "/*"
-//            beforeEachLine = " * "
-//            endLine = " */" + System.lineSeparator()
-//            afterEachLine = ""
-//            skipLinePattern = null
-//            firstLineDetectionPattern = "(\\s|\\t)*/\\*.*\$"
-//            lastLineDetectionPattern = ".*\\*/(\\s|\\t)*\$"
-//            allowBlankLines = false
-//            isMultiline = true
-//            padLines = false
-//        }
-//    }
-//    mapping {
-//        java = 'SLASHSTAR_STYLE_NEWLINE'
-//    }
-//    ext {
-//        name = project.mod_name
-//        author = 'Fallen_Breath'
-//        year = Calendar.getInstance().get(Calendar.YEAR).toString()
-//    }
-//}
-//classes.dependsOn licenseFormatMain
-//testClasses.dependsOn licenseFormatTest
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId base.archivesName.get()
-
-            from components.java
-        }
-    }
-
-    // select the repositories you want to publish to
-    repositories {
-        // mavenLocal()
-
-//		// [FEATURE] FALLENS_MAVEN
-//		maven {
-//			url = version.endsWith("SNAPSHOT") ? "https://maven.fallenbreath.me/snapshots" : "https://maven.fallenbreath.me/releases"
-//			credentials(PasswordCredentials) {
-//				username = 'fallen'
-//				password = System.getenv("FALLENS_MAVEN_TOKEN")
-//			}
-//			authentication {
-//				basic(BasicAuthentication)
-//			}
-//		}
     }
 }

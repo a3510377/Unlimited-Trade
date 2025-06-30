@@ -14,7 +14,7 @@
   "unlimitedtrade.config.dropBlockList.comment": "限制自動拋出的物品類型",
   "unlimitedtrade.config.maxUseRetries.name": "maxUseRetries | 最大交易後動作重試次數",
   "unlimitedtrade.config.maxUseRetries.comment": "設定最大交易後動作最大嘗試次數",
-  "unlimitedtrade.label.afterTradeActions.off": "§4關閉§r",
-  "unlimitedtrade.label.afterTradeActions.use": "對方塊交互/使用",
-  "unlimitedtrade.label.afterTradeActions.use_and_drop": "對方塊交互/使用 並拋出購買物"
+  "unlimitedtrade.config.after_trade_actions.off": "§4關閉§r",
+  "unlimitedtrade.config.after_trade_actions.use": "對方塊交互/使用",
+  "unlimitedtrade.config.after_trade_actions.use_and_drop": "對方塊交互/使用 並拋出購買物"
 }

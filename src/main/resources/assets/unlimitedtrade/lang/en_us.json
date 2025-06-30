@@ -14,7 +14,7 @@
   "unlimitedtrade.config.dropBlockList.comment": "Limit the type of items that are automatically thrown",
   "unlimitedtrade.config.maxUseRetries.name": "Maximum number of post-transaction retries",
   "unlimitedtrade.config.maxUseRetries.comment": "Set max post-trade action max attempts",
-  "unlimitedtrade.label.afterTradeActions.off": "§4off§r",
-  "unlimitedtrade.label.afterTradeActions.use": "Interact/use blocks",
-  "unlimitedtrade.label.afterTradeActions.use_and_drop": "Interact/use blocks and drop items"
+  "unlimitedtrade.config.after_trade_actions.off": "§4off§r",
+  "unlimitedtrade.config.after_trade_actions.use": "Interact/use blocks",
+  "unlimitedtrade.config.after_trade_actions.use_and_drop": "Interact/use blocks and drop items"
 }
