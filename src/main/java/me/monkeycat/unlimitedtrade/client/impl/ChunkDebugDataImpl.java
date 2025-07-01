@@ -5,7 +5,7 @@ import net.minecraft.util.math.ChunkPos;
 import org.jetbrains.annotations.Nullable;
 
 public interface ChunkDebugDataImpl {
-    ChunkPos unlimited_Trade$position();
+    ChunkPos position();
 
     @Nullable ChunkLevelType status();
 }

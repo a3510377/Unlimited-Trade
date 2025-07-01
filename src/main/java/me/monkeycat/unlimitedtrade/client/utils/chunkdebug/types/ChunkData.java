@@ -7,6 +7,6 @@ import net.minecraft.util.math.ChunkPos;
 
 public record ChunkData(ChunkPos chunkPos, ChunkLevelType levelType, Identifier serverWorld) {
     public static ChunkData fromChunkDebugDataImpl(ChunkDebugDataImpl chunkDebugData, Identifier serverWorld) {
-        return new ChunkData(chunkDebugData.unlimited_Trade$position(), chunkDebugData.status(), serverWorld);
+        return new ChunkData(chunkDebugData.position(), chunkDebugData.status(), serverWorld);
     }
 }
