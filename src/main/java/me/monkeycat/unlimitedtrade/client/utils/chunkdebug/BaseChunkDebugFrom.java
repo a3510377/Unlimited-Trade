@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseChunkDebugFrom {
     @Nullable
+    protected Boolean enabled = null;
+    @Nullable
     private RegistryKey<World> currentDimension = null;
 
     public abstract void startWatching(RegistryKey<World> dimension);
@@ -16,9 +18,16 @@ public abstract class BaseChunkDebugFrom {
 
     public abstract void refresh();
 
-    public abstract @Nullable ChunkData getChunkData(ChunkPos chunkPos);
+    @Nullable
+    public abstract ChunkData getChunkData(ChunkPos chunkPos);
 
-    public @Nullable RegistryKey<World> getCurrentWorld() {
+    @Nullable
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    @Nullable
+    public RegistryKey<World> getCurrentWorld() {
         return currentDimension;
     }
 

@@ -28,12 +28,20 @@ public abstract class ChunkDebugClientMixin implements ChunkDebugClientImpl {
     @Inject(method = "onInitializeClient", at = @At("TAIL"))
     private void onInitializeClientMixin(CallbackInfo ci) {
         ChunkDebugFromMixin.setChunkDebugClient(this);
+    }
+
+    @Inject(method = "setChunkMap", at = @At("RETURN"))
+    private void setChunkDebugMapMixin(CallbackInfo ci) {
         try {
-            Field field = this.getClass().getDeclaredField("map");
+            Class<?> clazz = Class.forName("me.senseiwells.chunkdebug.client.ChunkDebugClient");
+            Field field = clazz.getDeclaredField("map");
             field.setAccessible(true);
 
-            chunkDebugMap = (ChunkDebugMapImpl) field.get(this);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Object value = field.get(this);
+            if (value instanceof ChunkDebugMapImpl impl) this.chunkDebugMap = impl;
+            else if (value == null) this.chunkDebugMap = null;
+            else UnlimitedTradeMod.LOGGER.error("Chunk debug map type is not supper!");
+        } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
             UnlimitedTradeMod.LOGGER.error("Failed to access 'map' field in ChunkDebugClient: ", e);
         }
     }

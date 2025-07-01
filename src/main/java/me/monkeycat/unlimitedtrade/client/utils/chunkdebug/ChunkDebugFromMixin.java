@@ -55,18 +55,26 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
     @Override
     public @Nullable ChunkData getChunkData(ChunkPos chunkPos) {
         RegistryKey<World> worldRegistryKey = getCurrentWorld();
-        if (worldRegistryKey == null) return null;
+        if (worldRegistryKey == null) {
+            enabled = null;
+            return null;
+        }
 
         ChunkDebugMapImpl chunkDebugMap = getMap();
-        if (chunkDebugMap == null) return null;
+        if (chunkDebugMap == null) {
+            enabled = null;
+            return null;
+        }
 
         Object state = chunkDebugMap.unlimited_Trade$getStates().get(worldRegistryKey);
         if (state instanceof ChunkDebugDimensionStateImpl dimensionState) {
             if (dimensionState.unlimited_Trade$getChunks().get(chunkPos.toLong()) instanceof ChunkDebugDataImpl chunkData) {
+                enabled = true;
                 return ChunkData.fromChunkDebugDataImpl(chunkData, worldRegistryKey.getValue());
             }
         }
 
+        enabled = null;
         return null;
     }
 }
