@@ -132,18 +132,21 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         }
 
         // Interact with target block if it's not in the block drop blacklist
-        if (hitResult instanceof BlockHitResult blockHitResult) {
-            World world = client.world;
-            if (world == null) return;
+        AfterTradeActions afterTradeActions = (AfterTradeActions) Configs.AFTER_TRADE_ACTIONS.getOptionListValue();
+        if (afterTradeActions == AfterTradeActions.USE || afterTradeActions == AfterTradeActions.USE_AND_DROP) {
+            if (hitResult instanceof BlockHitResult blockHitResult) {
+                World world = client.world;
+                if (world == null) return;
 
-            BlockPos pos = blockHitResult.getBlockPos();
-            BlockState state = world.getBlockState(pos);
-            Identifier id = Registries.BLOCK.getId(state.getBlock());
+                BlockPos pos = blockHitResult.getBlockPos();
+                BlockState state = world.getBlockState(pos);
+                Identifier id = Registries.BLOCK.getId(state.getBlock());
 
-            boolean isTargetBlock = Configs.DROP_BLOCK_LIST.getStrings().stream().noneMatch(target -> target.equals(id.toString()));
-            if (!isTargetBlock) return;
+                boolean isTargetBlock = Configs.DROP_BLOCK_LIST.getStrings().stream().noneMatch(target -> target.equals(id.toString()));
+                if (!isTargetBlock) return;
 
-            client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, blockHitResult);
+                client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, blockHitResult);
+            }
         }
     }
 
@@ -156,7 +159,8 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
 
         // drop all sell item
-        if (Configs.AFTER_TRADE_ACTIONS.getOptionListValue() == AfterTradeActions.USE_AND_DROP) {
+        AfterTradeActions afterTradeActions = (AfterTradeActions) Configs.AFTER_TRADE_ACTIONS.getOptionListValue();
+        if (afterTradeActions == AfterTradeActions.DROP || afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             Set<Item> sellItems = new HashSet<>();
             List<TradeOffer> recipes = handler.getRecipes();
 

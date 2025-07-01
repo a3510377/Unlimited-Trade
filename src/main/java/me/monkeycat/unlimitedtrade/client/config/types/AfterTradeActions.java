@@ -3,7 +3,7 @@ package me.monkeycat.unlimitedtrade.client.config.types;
 import me.monkeycat.unlimitedtrade.client.config.options.CustomEnumOptionEntry;
 
 public enum AfterTradeActions implements CustomEnumOptionEntry {
-    OFF, USE, USE_AND_DROP;
+    OFF, USE, DROP, USE_AND_DROP;
 
     public CustomEnumOptionEntry getDefault() {
         return USE_AND_DROP;
