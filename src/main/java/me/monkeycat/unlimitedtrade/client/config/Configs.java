@@ -14,6 +14,8 @@ import me.monkeycat.unlimitedtrade.client.config.gui.CustomConfigBaseGUI;
 import me.monkeycat.unlimitedtrade.client.config.options.*;
 import me.monkeycat.unlimitedtrade.client.config.types.AfterTradeActions;
 import me.monkeycat.unlimitedtrade.client.config.types.WaitProtoTypes;
+import me.monkeycat.unlimitedtrade.client.utils.RegistryUtils;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 
 import java.lang.reflect.Field;
@@ -33,7 +35,9 @@ public class Configs {
     @Config(type = Config.Type.HOTKEY, category = Config.Category.SETTING)
     public static final CustomConfigBoolHotkey START_TRADE = newConfigBoolHotkey("startTrade", false, "C,V");
     @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
-    public static final CustomConfigStringList DROP_BLOCK_LIST = newConfigStringList("dropBlockList", ImmutableList.of(Items.EMERALD.toString()));
+    public static final CustomConfigStringList DROP_BLOCK_LIST = newConfigStringList("dropBlockList", RegistryUtils.getItemIds(ImmutableList.of(Items.EMERALD)));
+    @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
+    public static final CustomConfigStringList AFTER_USE_WHITE_LIST = newConfigStringList("afterUseWhiteList", RegistryUtils.getBlockIds(ImmutableList.of(Blocks.TRAPPED_CHEST, Blocks.NOTE_BLOCK)));
     public static final ItemRestriction DROP_BLOCK_LIST_RESTRICTION = new ItemRestriction();
     @Config(type = Config.Type.LIST, category = Config.Category.SETTING)
     public static final CustomConfigOptionList AFTER_TRADE_ACTIONS = newConfigOptionList("afterTradeActions", AfterTradeActions.OFF.getDefault());

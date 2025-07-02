@@ -47,7 +47,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
     private static MerchantEntity currentMerchantEntity;
     private long lastTradeCloseTime = 0;
     private boolean manuallyClosedTrade = false;
-    private boolean hasOpenedTradeScreen = false;
+    private boolean hasOpenedScreen = false;
 
     public static BaseChunkDebugFrom getChunkDataAPI() {
         return chunkDataAPI;
@@ -86,7 +86,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         // Handle when the current screen is a merchant trading screen
         if (client.currentScreen instanceof MerchantScreen merchantScreen) {
             if (currentMerchantEntity == null) return;
-            hasOpenedTradeScreen = true;
+            hasOpenedScreen = true;
 
             boolean shouldTrade = false;
             WaitProtoTypes waitProtoType = (WaitProtoTypes) Configs.WAIT_PROTO_TYPE.getOptionListValue();
@@ -103,16 +103,16 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
             if (shouldTrade) {
                 startTrade(client, merchantScreen);
                 merchantScreen.close();
-                hasOpenedTradeScreen = false;
+                hasOpenedScreen = false;
             }
             return;
         }
 
         // If the trade screen was open and now closed without trading, trigger cooldown
-        if (hasOpenedTradeScreen) {
+        if (hasOpenedScreen) {
             lastTradeCloseTime = now;
+            hasOpenedScreen = false;
             manuallyClosedTrade = true;
-            hasOpenedTradeScreen = false;
             return;
         }
 
@@ -142,7 +142,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
                 BlockState state = world.getBlockState(pos);
                 Identifier id = Registries.BLOCK.getId(state.getBlock());
 
-                boolean isTargetBlock = Configs.DROP_BLOCK_LIST.getStrings().stream().noneMatch(target -> target.equals(id.toString()));
+                boolean isTargetBlock = Configs.AFTER_USE_WHITE_LIST.getStrings().stream().noneMatch(target -> target.equals(id.toString()));
                 if (!isTargetBlock) return;
 
                 client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, blockHitResult);
