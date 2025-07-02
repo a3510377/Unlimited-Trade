@@ -32,7 +32,8 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
 
     @Override
     public void stopWatching() {
-        if (chunkDebugClient != null) {
+        // Check chunkdebug map is not use
+        if (chunkDebugClient != null && chunkDebugClient.unlimited_Trade$getChunkDebugMap() == null) {
             chunkDebugClient.stopWatching();
         }
     }
