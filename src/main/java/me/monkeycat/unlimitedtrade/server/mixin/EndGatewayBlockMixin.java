@@ -21,23 +21,23 @@ import java.util.Set;
 public abstract class EndGatewayBlockMixin {
     @Inject(method = "createTeleportTarget", at = @At("HEAD"), cancellable = true)
     private void injectCreateTeleportTarget(ServerWorld world, Entity entity, BlockPos pos, CallbackInfoReturnable<TeleportTarget> cir) {
-        if (world.getBlockEntity(pos) instanceof EndGatewayBlockEntity endGatewayBlockEntity) {
-            Vec3d vec3d = endGatewayBlockEntity.getOrCreateExitPortalPos(world, pos);
-            if (vec3d != null) {
-                Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
-                TeleportTarget.PostDimensionTransition ticketBehavior = TeleportTarget.ADD_PORTAL_CHUNK_TICKET;
-
-                if (entity instanceof EnderPearlEntity) {
-                    flags = Set.of();
-                } else if (entity instanceof ServerPlayerEntity) {
-                    ticketBehavior = TeleportTarget.NO_OP;
-                }
-
-                cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
-                return;
-            }
+        if (!(world.getBlockEntity(pos) instanceof EndGatewayBlockEntity endGatewayBlockEntity)) {
+            cir.setReturnValue(null);
+            return;
         }
 
-        cir.setReturnValue(null);
+        Vec3d vec3d = endGatewayBlockEntity.getOrCreateExitPortalPos(world, pos);
+        if (vec3d != null) {
+            Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
+            TeleportTarget.PostDimensionTransition ticketBehavior = TeleportTarget.ADD_PORTAL_CHUNK_TICKET;
+
+            if (entity instanceof EnderPearlEntity) {
+                flags = Set.of();
+            } else if (entity instanceof ServerPlayerEntity) {
+                ticketBehavior = TeleportTarget.NO_OP;
+            }
+
+            cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
+        }
     }
 }

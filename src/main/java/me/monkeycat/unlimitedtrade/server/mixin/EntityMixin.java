@@ -1,10 +1,8 @@
 package me.monkeycat.unlimitedtrade.server.mixin;
 
-import me.monkeycat.unlimitedtrade.common.network.MerchantEntityStatusPayload;
+import me.monkeycat.unlimitedtrade.server.UnlimitedTradeModServer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.MerchantEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,10 +13,14 @@ public class EntityMixin {
     @Inject(method = "onRemove", at = @At("TAIL"))
     public void onRemove(Entity.RemovalReason reason, CallbackInfo ci) {
         if ((Object) this instanceof MerchantEntity merchantEntity) {
-            @Nullable PlayerEntity playerEntity = merchantEntity.getCustomer();
-            if (playerEntity == null) return;
+            UnlimitedTradeModServer unlimitedTradeModServer = UnlimitedTradeModServer.getInstance();
 
-            MerchantEntityStatusPayload payload = MerchantEntityStatusPayload.getFromMerchantEntity(merchantEntity);
+            if (unlimitedTradeModServer == null) return;
+
+            unlimitedTradeModServer.sendNewStatus(merchantEntity);
+            if (merchantEntity.getRemovalReason() == Entity.RemovalReason.KILLED) {
+                unlimitedTradeModServer.removeMerchant(merchantEntity.getUuid());
+            }
         }
     }
 }

@@ -1,14 +1,12 @@
 package me.monkeycat.unlimitedtrade.common.network;
 
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.ChunkDebugFromNetwork;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 
 public record UnlimitedTradeHelloPayload(int version) implements UnlimitedTradBasePayload {
     public static final UnlimitedTradeHelloPayload INSTANCE = new UnlimitedTradeHelloPayload(1_0_0);
-    public static final Id<ChunkDebugFromNetwork.HelloPayloadV3> ID = UnlimitedTradBasePayload.payloadId("hello");
-    public static final PacketCodec<RegistryByteBuf, UnlimitedTradeHelloPayload> data = PacketCodec.of(UnlimitedTradeHelloPayload::encode, UnlimitedTradeHelloPayload::decode);
+    public static final Id<UnlimitedTradeHelloPayload> ID = UnlimitedTradBasePayload.payloadId("hello");
+    public static final PacketCodec<RegistryByteBuf, UnlimitedTradeHelloPayload> PACKET_CODEC = PacketCodec.of(UnlimitedTradeHelloPayload::encode, UnlimitedTradeHelloPayload::decode);
 
     private static void encode(UnlimitedTradeHelloPayload payload, RegistryByteBuf buf) {
         buf.writeInt(payload.version());
@@ -21,7 +19,7 @@ public record UnlimitedTradeHelloPayload(int version) implements UnlimitedTradBa
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<UnlimitedTradeHelloPayload> getId() {
         return ID;
     }
 }
