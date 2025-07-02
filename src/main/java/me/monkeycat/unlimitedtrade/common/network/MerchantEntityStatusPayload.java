@@ -18,7 +18,7 @@ import java.util.Map;
 
 public record MerchantEntityStatusPayload(RegistryKey<World> world, int entityId,
                                           @Nullable Entity.RemovalReason removalReason) implements UnlimitedTradBasePayload {
-    public static final Id<ChunkDebugFromNetwork.HelloPayloadV3> ID = UnlimitedTradBasePayload.payloadId("hello");
+    public static final Id<ChunkDebugFromNetwork.HelloPayloadV3> ID = UnlimitedTradBasePayload.payloadId("entity_status");
     public static final PacketCodec<RegistryByteBuf, MerchantEntityStatusPayload> data = PacketCodec.of(MerchantEntityStatusPayload::encode, MerchantEntityStatusPayload::decode);
 
     private static void encode(MerchantEntityStatusPayload payload, RegistryByteBuf buf) {

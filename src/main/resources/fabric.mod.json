@@ -16,7 +16,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.monkeycat.unlimitedtrade.UnlimitedTradeMod"
+      "me.monkeycat.unlimitedtrade.UnlimitedTradeMod",
+      "me.monkeycat.unlimitedtrade.server.UnlimitedTradeModServer"
     ],
     "client": [
       "me.monkeycat.unlimitedtrade.client.UnlimitedTradeModClient"

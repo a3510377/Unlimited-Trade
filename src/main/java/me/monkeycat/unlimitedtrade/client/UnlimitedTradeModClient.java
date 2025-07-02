@@ -17,7 +17,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -136,17 +138,27 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         if (afterTradeActions == AfterTradeActions.USE || afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             if (hitResult instanceof BlockHitResult blockHitResult) {
                 World world = client.world;
-                if (world == null) return;
+                if (world == null || client.player.isSneaking()) return;
 
                 BlockPos pos = blockHitResult.getBlockPos();
                 BlockState state = world.getBlockState(pos);
                 Identifier id = Registries.BLOCK.getId(state.getBlock());
 
-                boolean isTargetBlock = Configs.AFTER_USE_WHITE_LIST.getStrings().stream().noneMatch(target -> target.equals(id.toString()));
+                boolean isTargetBlock = Configs.AFTER_USE_WHITE_LIST.getStrings().stream().anyMatch(target -> target.equals(id.toString()));
                 if (!isTargetBlock) return;
+
+                // Prevent putting it down
+                ItemStack stackInHand = client.player.getMainHandStack();
+                if (!stackInHand.isEmpty() && stackInHand.getItem() instanceof BlockItem) {
+                    return;
+                }
 
                 client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, blockHitResult);
             }
+        }
+
+        if (client.currentScreen != null && !hasOpenedScreen) {
+            hasOpenedScreen = true;
         }
     }
 
