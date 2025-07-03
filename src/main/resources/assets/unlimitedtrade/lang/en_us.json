@@ -16,5 +16,20 @@
   "unlimitedtrade.config.maxUseRetries.comment": "Set max post-trade action max attempts",
   "unlimitedtrade.config.after_trade_actions.off": "§4off§r",
   "unlimitedtrade.config.after_trade_actions.use": "Interact/use blocks",
-  "unlimitedtrade.config.after_trade_actions.use_and_drop": "Interact/use blocks and drop items"
+  "unlimitedtrade.config.after_trade_actions.use_and_drop": "Interact/use blocks and drop items",
+  "carpet.rule.disableEndGatewayAnyTicket.name": "Disable Entity End Gateway Chunk Ticket",
+  "carpet.rule.disableEndGatewayAnyTicket.desc": "Disables forced chunk loading of exit chunk when entities teleport through the End Gateway",
+  "carpet.rule.disableEndGatewayAnyTicket.extra.0": "Affects all entities including mobs, items, and Ender Pearls regarding chunk loading on teleport",
+  "carpet.rule.disableEndGatewayPlayerTicket.name": "Disable Player End Gateway Chunk Ticket",
+  "carpet.rule.disableEndGatewayPlayerTicket.desc": "Disables forced chunk loading of exit chunk only for players teleporting through the End Gateway",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.0": "Only affects players; target chunk won't be force-loaded after teleport",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.1": "Does not affect other entities such as mobs, items, or Ender Pearls",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.2": "Helps restore the legacy void trading mechanism",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.3": "Enable enablePersistentTradingScreen rule as well to use legacy void trading",
+  "carpet.rule.enablePersistentTradingScreen.name": "Enable Persistent Trading Screen",
+  "carpet.rule.enablePersistentTradingScreen.desc": "Restores the old behavior allowing continuous trading with villagers even if their chunk is unloaded",
+  "carpet.rule.enablePersistentTradingScreen.extra.0": "When enabled, the trading screen remains open even if the villager's chunk is not loaded",
+  "carpet.rule.enablePersistentTradingScreen.extra.1": "Trading screen closes normally when the player dies or manually closes the interface",
+  "carpet.rule.enablePersistentTradingScreen.extra.2": "Helps restore legacy void trading mechanism",
+  "carpet.rule.enablePersistentTradingScreen.extra.3": "Enable disableEndGatewayPlayerTicket rule as well to use legacy void trading"
 }

@@ -1,5 +1,6 @@
 package me.monkeycat.unlimitedtrade.server.mixin;
 
+import me.monkeycat.unlimitedtrade.server.UnlimitedTradeModSettings;
 import net.minecraft.block.EndGatewayBlock;
 import net.minecraft.block.entity.EndGatewayBlockEntity;
 import net.minecraft.entity.Entity;
@@ -27,17 +28,21 @@ public abstract class EndGatewayBlockMixin {
         }
 
         Vec3d vec3d = endGatewayBlockEntity.getOrCreateExitPortalPos(world, pos);
-        if (vec3d != null) {
-            Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
-            TeleportTarget.PostDimensionTransition ticketBehavior = TeleportTarget.ADD_PORTAL_CHUNK_TICKET;
-
-            if (entity instanceof EnderPearlEntity) {
-                flags = Set.of();
-            } else if (entity instanceof ServerPlayerEntity) {
-                ticketBehavior = TeleportTarget.NO_OP;
-            }
-
-            cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
+        if (vec3d == null) {
+            cir.setReturnValue(null);
+            return;
         }
+
+        Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
+        TeleportTarget.PostDimensionTransition ticketBehavior = TeleportTarget.ADD_PORTAL_CHUNK_TICKET;
+
+        if (entity instanceof EnderPearlEntity) {
+            flags = Set.of();
+        }
+        if (UnlimitedTradeModSettings.disableEndGatewayAnyTicket || (entity instanceof ServerPlayerEntity && UnlimitedTradeModSettings.disableEndGatewayPlayerTicket)) {
+            ticketBehavior = TeleportTarget.NO_OP;
+        }
+
+        cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
     }
 }

@@ -16,5 +16,20 @@
   "unlimitedtrade.config.maxUseRetries.comment": "設定最大交易後動作最大嘗試次數",
   "unlimitedtrade.config.after_trade_actions.off": "§4關閉§r",
   "unlimitedtrade.config.after_trade_actions.use": "對方塊交互/使用",
-  "unlimitedtrade.config.after_trade_actions.use_and_drop": "對方塊交互/使用 並拋出購買物"
+  "unlimitedtrade.config.after_trade_actions.use_and_drop": "對方塊交互/使用 並拋出購買物",
+  "carpet.rule.disableEndGatewayAnyTicket.name": "停用實體傳送門強制載入",
+  "carpet.rule.disableEndGatewayAnyTicket.desc": "停用所有實體通過終界傳送門時強制載入出口區塊的行為",
+  "carpet.rule.disableEndGatewayAnyTicket.extra.0": "影響所有實體（包含生物、掉落物與珍珠）傳送後的區塊加載行為",
+  "carpet.rule.disableEndGatewayPlayerTicket.name": "停用玩家傳送門強制載入",
+  "carpet.rule.disableEndGatewayPlayerTicket.desc": "停用玩家通過終界傳送門時強制載入出口區塊的行為",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.0": "僅影響玩家，傳送後目標區塊將不會被強制加載",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.1": "不影響其他實體（如生物、掉落物或珍珠）的傳送行為",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.2": "此規則可協助恢復舊版虛空交易機制",
+  "carpet.rule.disableEndGatewayPlayerTicket.extra.3": "若需要使用舊版虛空交易，請同時啟用 enablePersistentTradingScreen 規則",
+  "carpet.rule.enablePersistentTradingScreen.name": "啟用持續交易畫面",
+  "carpet.rule.enablePersistentTradingScreen.desc": "恢復舊版本允許與未加載村民持續交易的行為",
+  "carpet.rule.enablePersistentTradingScreen.extra.0": "啟用後，即使村民所在區塊未加載，交易畫面仍會保持開啟",
+  "carpet.rule.enablePersistentTradingScreen.extra.1": "玩家死亡或手動關閉交易介面時，交易畫面會正常終止",
+  "carpet.rule.enablePersistentTradingScreen.extra.2": "此規則可協助恢復舊版虛空交易機制",
+  "carpet.rule.enablePersistentTradingScreen.extra.3": "若需要使用舊版虛空交易，請同時啟用 disableEndGatewayPlayerTicket 規則"
 }

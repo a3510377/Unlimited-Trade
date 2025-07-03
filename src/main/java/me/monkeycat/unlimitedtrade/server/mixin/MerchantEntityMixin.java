@@ -1,5 +1,6 @@
 package me.monkeycat.unlimitedtrade.server.mixin;
 
+import me.monkeycat.unlimitedtrade.server.UnlimitedTradeModSettings;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.MerchantEntity;
@@ -22,6 +23,8 @@ public abstract class MerchantEntityMixin extends LivingEntity {
 
     @Inject(method = "canInteract", at = @At("HEAD"), cancellable = true)
     public void canInteract(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+        if (!UnlimitedTradeModSettings.enablePersistentTradingScreen) return;
+
         RemovalReason reason = this.getRemovalReason();
 
         boolean allow = this.getCustomer() == player && this.getHealth() > 0.0F && (reason == null || switch (reason) {

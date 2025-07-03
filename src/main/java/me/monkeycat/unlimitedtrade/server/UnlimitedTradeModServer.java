@@ -1,5 +1,7 @@
 package me.monkeycat.unlimitedtrade.server;
 
+import carpet.CarpetExtension;
+import carpet.CarpetServer;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -7,6 +9,7 @@ import me.monkeycat.unlimitedtrade.common.network.MerchantEntityStatusPayload;
 import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeHelloPayload;
 import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeStartWatchPayload;
 import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeStopWatchPayload;
+import me.monkeycat.unlimitedtrade.server.utils.UnlimitedTradeTranslations;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -23,9 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
-public class UnlimitedTradeModServer implements ModInitializer {
+public class UnlimitedTradeModServer implements CarpetExtension, ModInitializer {
     @Nullable
     private static UnlimitedTradeModServer instance = null;
 
@@ -38,8 +42,14 @@ public class UnlimitedTradeModServer implements ModInitializer {
     }
 
     @Override
+    public void onGameStarted() {
+        CarpetServer.settingsManager.parseSettingsClass(UnlimitedTradeModSettings.class);
+    }
+
+    @Override
     public void onInitialize() {
         instance = this;
+        CarpetServer.manageExtension(new UnlimitedTradeModServer());
 
         ServerPlayConnectionEvents.JOIN.register(this::sendHelloPayload);
         ServerPlayConnectionEvents.DISCONNECT.register(this::handleDisconnect);
@@ -118,5 +128,10 @@ public class UnlimitedTradeModServer implements ModInitializer {
         synchronized (watching) {
             watching.removeAll(merchantUuid);
         }
+    }
+
+    @Override
+    public Map<String, String> canHasTranslations(String lang) {
+        return UnlimitedTradeTranslations.getTranslationFromResourcePath(lang);
     }
 }
