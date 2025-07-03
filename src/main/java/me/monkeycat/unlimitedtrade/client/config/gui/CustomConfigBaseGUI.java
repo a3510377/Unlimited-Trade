@@ -25,7 +25,6 @@ public class CustomConfigBaseGUI extends GuiConfigsBase {
         tab = defaultTab;
     }
 
-
     public static void openGui() {
         GuiBase.openGui(new CustomConfigBaseGUI());
     }
