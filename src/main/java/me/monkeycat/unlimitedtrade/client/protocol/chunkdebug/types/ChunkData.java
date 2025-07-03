@@ -1,4 +1,4 @@
-package me.monkeycat.unlimitedtrade.client.utils.chunkdebug.types;
+package me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.types;
 
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugDataImpl;
 import net.minecraft.server.world.ChunkLevelType;

@@ -1,15 +1,11 @@
-package me.monkeycat.unlimitedtrade.client.utils.chunkdebug;
+package me.monkeycat.unlimitedtrade.client.protocol.chunkdebug;
 
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
 import me.monkeycat.unlimitedtrade.client.utils.ModIds;
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.types.ChunkData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class ChunkDebugFromNetwork extends BaseChunkDebugFrom {
     public static final String PROTOCOL_ID = ModIds.chunkdebug;
@@ -26,20 +22,18 @@ public class ChunkDebugFromNetwork extends BaseChunkDebugFrom {
     }
 
     @Override
-    public void startWatching(RegistryKey<World> dimension) {
+    public void startWatching(MerchantEntity merchantEntity) {
+
     }
 
     @Override
     public void stopWatching() {
+
     }
 
     @Override
-    public void refresh() {
-    }
-
-    @Override
-    public @Nullable ChunkData getChunkData(ChunkPos chunkPos) {
-        return null;
+    public boolean canTrade(MerchantEntity merchantEntity) {
+        return false;
     }
 
     public record HelloPayloadV3(int version) implements CustomPayload {

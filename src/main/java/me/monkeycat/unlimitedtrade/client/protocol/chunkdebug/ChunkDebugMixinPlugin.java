@@ -1,4 +1,4 @@
-package me.monkeycat.unlimitedtrade.client.utils.chunkdebug;
+package me.monkeycat.unlimitedtrade.client.protocol.chunkdebug;
 
 import me.fallenbreath.conditionalmixin.api.mixin.RestrictiveMixinConfigPlugin;
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;

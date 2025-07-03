@@ -32,9 +32,11 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
-    "minecraft": "${minecraft_dependency}",
+    "minecraft": "${minecraft_dependency}"
+  },
+  "recommends": {
     "malilib": "${malilib_dependency}",
     "itemscroller": "*",
-    "conditional-mixin": ">=0.2.0"
+    "carpet": "${carpet_dependency}"
   }
 }

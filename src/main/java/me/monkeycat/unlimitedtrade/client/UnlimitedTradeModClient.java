@@ -6,11 +6,11 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import me.monkeycat.unlimitedtrade.client.config.Configs;
 import me.monkeycat.unlimitedtrade.client.config.types.AfterTradeActions;
 import me.monkeycat.unlimitedtrade.client.config.types.WaitProtoTypes;
+import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.BaseChunkDebugFrom;
+import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.ChunkDebugFromMixin;
+import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.ChunkDebugFromNetwork;
+import me.monkeycat.unlimitedtrade.client.protocol.unlimitedtrade.UnlimitedTradeProtocol;
 import me.monkeycat.unlimitedtrade.client.utils.ModIds;
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.BaseChunkDebugFrom;
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.ChunkDebugFromMixin;
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.ChunkDebugFromNetwork;
-import me.monkeycat.unlimitedtrade.client.utils.chunkdebug.types.ChunkData;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.world.ChunkLevelType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -42,18 +41,14 @@ import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 
 public class UnlimitedTradeModClient implements ClientModInitializer {
     private static final long TRADE_COOLDOWN_MS = 1000;
-    private static boolean statusChangeFlag = false;
-    private static BaseChunkDebugFrom chunkDataAPI;
     private static UnlimitedTradeModClient instance;
     @Nullable
     private static MerchantEntity currentMerchantEntity;
+    private BaseChunkDebugFrom chunkDataAPI;
+    private UnlimitedTradeProtocol unlimitedTradeProtocol;
     private long lastTradeCloseTime = 0;
     private boolean manuallyClosedTrade = false;
     private boolean hasOpenedScreen = false;
-
-    public static BaseChunkDebugFrom getChunkDataAPI() {
-        return chunkDataAPI;
-    }
 
     public static UnlimitedTradeModClient getInstance() {
         return instance;
@@ -62,8 +57,10 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
+        unlimitedTradeProtocol = new UnlimitedTradeProtocol();
 
         Configs.init();
+        unlimitedTradeProtocol.init();
 
         if (FabricLoader.getInstance().isModLoaded(ModIds.chunkdebug)) {
             chunkDataAPI = new ChunkDebugFromMixin();
@@ -94,11 +91,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
             WaitProtoTypes waitProtoType = (WaitProtoTypes) Configs.WAIT_PROTO_TYPE.getOptionListValue();
             boolean checkChunkState = waitProtoType == WaitProtoTypes.AUTO || waitProtoType == WaitProtoTypes.CHUNKDEBUG;
             if (checkChunkState && !Boolean.FALSE.equals(chunkDataAPI.getEnabled())) {
-                @Nullable ChunkData chunkDebugData = chunkDataAPI.getChunkData(currentMerchantEntity.getChunkPos());
-                ChunkLevelType levelType = chunkDebugData != null ? chunkDebugData.levelType() : null;
-
-                if (levelType != null) statusChangeFlag = true;
-                shouldTrade = levelType == ChunkLevelType.INACCESSIBLE || (levelType == null && statusChangeFlag);
+                shouldTrade = chunkDataAPI.canTrade(currentMerchantEntity);
             }
 
             // Perform the trade and reset tracking flag
@@ -123,12 +116,11 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
             if (client.currentScreen != null || client.player.isSneaking()) return;
 
             currentMerchantEntity = merchantEntity;
-            chunkDataAPI.setCurrentWorld(merchantEntity.getWorld().getRegistryKey());
+            chunkDataAPI.startWatching(merchantEntity);
 
             if (!client.player.getPos().isInRange(merchantEntity.getPos(), 3)) return;
 
-            statusChangeFlag = false;
-
+            chunkDataAPI.setStatusChangeFlag(false);
             client.interactionManager.interactEntity(client.player, merchantEntity, Hand.MAIN_HAND);
             return;
         }
@@ -191,5 +183,13 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
                 }
             }
         }
+    }
+
+    public BaseChunkDebugFrom getChunkDataAPI() {
+        return chunkDataAPI;
+    }
+
+    public UnlimitedTradeProtocol getUnlimitedTradeProtocol() {
+        return unlimitedTradeProtocol;
     }
 }
