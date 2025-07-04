@@ -5,7 +5,6 @@ import net.minecraft.block.EndGatewayBlock;
 import net.minecraft.block.entity.EndGatewayBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +15,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Set;
+//#if MC > 12101
+//$$ import net.minecraft.network.packet.s2c.play.PositionFlag;
+//$$
+//$$ import java.util.Set;
+//#endif
 
 @Mixin(EndGatewayBlock.class)
 public abstract class EndGatewayBlockMixin {
@@ -33,16 +36,23 @@ public abstract class EndGatewayBlockMixin {
             return;
         }
 
-        Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
         TeleportTarget.PostDimensionTransition ticketBehavior = TeleportTarget.ADD_PORTAL_CHUNK_TICKET;
-
-        if (entity instanceof EnderPearlEntity) {
-            flags = Set.of();
-        }
         if (UnlimitedTradeModSettings.disableEndGatewayAnyTicket || (entity instanceof ServerPlayerEntity && UnlimitedTradeModSettings.disableEndGatewayPlayerTicket)) {
             ticketBehavior = TeleportTarget.NO_OP;
         }
 
-        cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
+        //#if MC > 12101
+        //$$ Set<PositionFlag> flags = PositionFlag.combine(PositionFlag.DELTA, PositionFlag.ROT);
+        //$$
+        //$$ if (entity instanceof EnderPearlEntity) {
+        //$$     flags = Set.of();
+        //$$ }
+        //$$
+        //$$ cir.setReturnValue(new TeleportTarget(world, vec3d, Vec3d.ZERO, 0.0F, 0.0F, flags, ticketBehavior));
+        //#else
+        Vec3d velocity = entity instanceof EnderPearlEntity ? new Vec3d(0.0F, -1.0F, 0.0F) : entity.getVelocity();
+
+        cir.setReturnValue(new TeleportTarget(world, vec3d, velocity, entity.getYaw(), entity.getPitch(), ticketBehavior));
+        //#endif
     }
 }

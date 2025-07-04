@@ -10,7 +10,7 @@ import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.BaseChunkDebugFrom
 import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.ChunkDebugFromMixin;
 import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.ChunkDebugFromNetwork;
 import me.monkeycat.unlimitedtrade.client.protocol.unlimitedtrade.UnlimitedTradeProtocol;
-import me.monkeycat.unlimitedtrade.client.utils.ModIds;
+import me.monkeycat.unlimitedtrade.common.utils.ModIds;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;

@@ -39,12 +39,15 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
             return null;
         }
 
-        Object state = chunkDebugMap.unlimited_Trade$getStates().get(worldRegistryKey);
-        if (state instanceof ChunkDebugDimensionStateImpl dimensionState) {
-            if (dimensionState.unlimited_Trade$getChunks().get(chunkPos.toLong()) instanceof ChunkDebugDataImpl chunkData) {
-                enabled = true;
-                return ChunkData.fromChunkDebugDataImpl(chunkData, worldRegistryKey.getValue());
-            }
+        ChunkDebugDimensionStateImpl dimensionState = chunkDebugMap.unlimited_Trade$getStates().get(worldRegistryKey);
+        if (dimensionState == null) {
+            enabled = null;
+            return null;
+        }
+
+        if (dimensionState.unlimited_Trade$getChunks().get(chunkPos.toLong()) instanceof ChunkDebugDataImpl chunkData) {
+            enabled = true;
+            return ChunkData.fromChunkDebugDataImpl(chunkData, worldRegistryKey.getValue());
         }
 
         enabled = null;
@@ -53,8 +56,6 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
 
     @Override
     public void startWatching(@Nullable MerchantEntity merchantEntity) {
-        setCurrentMerchantEntity(merchantEntity);
-
         if (merchantEntity == null) {
             stopWatching();
             return;
@@ -77,7 +78,6 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
         }
 
         setCurrentWorld(null);
-        setCurrentMerchantEntity(null);
     }
 
     @Override

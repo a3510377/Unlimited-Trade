@@ -6,7 +6,7 @@ import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugClientImpl;
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugMapImpl;
 import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.ChunkDebugFromMixin;
-import me.monkeycat.unlimitedtrade.client.utils.ModIds;
+import me.monkeycat.unlimitedtrade.common.utils.ModIds;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;

@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugDimensionStateImpl;
-import me.monkeycat.unlimitedtrade.client.utils.ModIds;
+import me.monkeycat.unlimitedtrade.common.utils.ModIds;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;

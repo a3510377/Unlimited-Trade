@@ -6,7 +6,6 @@ import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.registry.Registry;
-import fi.dy.masa.malilib.util.data.ModInfo;
 import fi.dy.masa.malilib.util.restrictions.ItemRestriction;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
@@ -22,6 +21,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+//#if MC >= 12101
+import fi.dy.masa.malilib.util.data.ModInfo;
+//#endif
 
 import static me.monkeycat.unlimitedtrade.client.config.ConfigFactory.*;
 
@@ -77,7 +80,9 @@ public class Configs {
             ConfigManager.getInstance().registerConfigHandler(UnlimitedTradeMod.MOD_ID, CustomConfigStorage.getInstance());
             InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
 
+            //#if MC >= 12101
             Registry.CONFIG_SCREEN.registerConfigScreenFactory(new ModInfo(UnlimitedTradeMod.MOD_ID, UnlimitedTradeMod.MOD_NAME, CustomConfigBaseGUI::new));
+            //#endif
 
             OPEN_CONFIG_GUI.getKeybind().setCallback(((action, key) -> {
                 CustomConfigBaseGUI.openGui();

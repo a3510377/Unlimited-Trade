@@ -1,7 +1,7 @@
 package me.monkeycat.unlimitedtrade.client.protocol.chunkdebug;
 
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
-import me.monkeycat.unlimitedtrade.client.utils.ModIds;
+import me.monkeycat.unlimitedtrade.common.utils.ModIds;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.network.packet.CustomPayload;

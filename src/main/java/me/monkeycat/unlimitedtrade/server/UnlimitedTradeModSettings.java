@@ -13,6 +13,8 @@ public class UnlimitedTradeModSettings {
     @Rule(categories = {FEATURE, TRADE})
     public static boolean disableEndGatewayPlayerTicket = false;
 
-    @Rule(categories = {FEATURE, TRADE})
-    public static boolean enablePersistentTradingScreen = false;
+    //#if MC >= 12104
+    //$$ @Rule(categories = {FEATURE, TRADE})
+    //$$ public static boolean enablePersistentTradingScreen = false;
+    //#endif
 }

@@ -10,8 +10,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class EntityMixin {
-    @Inject(method = "onRemove", at = @At("TAIL"))
+    //#if MC > 12101
+    //$$ @SuppressWarnings("ConstantConditions")
+    //$$ @Inject(method = "onRemove", at = @At("TAIL"))
+    //$$ public void onRemove(Entity.RemovalReason reason, CallbackInfo ci) {
+    //#else
+    @Inject(method = "setRemoved", at = @At("HEAD"))
     public void onRemove(Entity.RemovalReason reason, CallbackInfo ci) {
+        //#endif
         if ((Object) this instanceof MerchantEntity merchantEntity) {
             UnlimitedTradeModServer unlimitedTradeModServer = UnlimitedTradeModServer.getInstance();
 
