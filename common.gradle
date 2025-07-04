@@ -15,19 +15,19 @@ repositories {
     }
 
     maven {
-        url "https://maven.terraformersmc.com/releases/"
+        url = "https://maven.terraformersmc.com/releases/"
     }
 
     maven {
-        url "https://cursemaven.com"
+        url = "https://cursemaven.com"
         content {
-            includeGroup "curse.maven"
+            includeGroup("curse.maven")
         }
     }
 
     maven {
-        name("Modrinth Maven")
-        url("https://api.modrinth.com/maven")
+        name = "Modrinth Maven"
+        url = "https://api.modrinth.com/maven"
 
         content {
             includeGroup("maven.modrinth")
