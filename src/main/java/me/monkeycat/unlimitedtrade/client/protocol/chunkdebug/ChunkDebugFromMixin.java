@@ -72,9 +72,8 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
 
     @Override
     public void stopWatching() {
-        RegistryKey<World> world = getCurrentWorld();
-        if (chunkDebugClient != null && world != null) {
-            chunkDebugClient.stopWatching(world);
+        if (chunkDebugClient != null) {
+            chunkDebugClient.stopWatching();
         }
 
         setCurrentWorld(null);

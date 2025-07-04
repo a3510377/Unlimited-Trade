@@ -15,8 +15,8 @@ public class EntityMixin {
     //$$ @Inject(method = "onRemove", at = @At("TAIL"))
     //$$ public void onRemove(Entity.RemovalReason reason, CallbackInfo ci) {
     //#else
-    @Inject(method = "setRemoved", at = @At("HEAD"))
-    public void onRemove(Entity.RemovalReason reason, CallbackInfo ci) {
+    @Inject(method = "setRemoved", at = @At("TAIL"))
+    public void setRemove(Entity.RemovalReason reason, CallbackInfo ci) {
         //#endif
         if ((Object) this instanceof MerchantEntity merchantEntity) {
             UnlimitedTradeModServer unlimitedTradeModServer = UnlimitedTradeModServer.getInstance();

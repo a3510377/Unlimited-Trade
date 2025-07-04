@@ -7,7 +7,6 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,15 +33,6 @@ public record MerchantEntityStatusPayload(RegistryKey<World> world, UUID uuid,
 
     public static MerchantEntityStatusPayload getFromMerchantEntity(MerchantEntity merchantEntity) {
         return new MerchantEntityStatusPayload(merchantEntity.getWorld().getRegistryKey(), merchantEntity.getUuid(), merchantEntity.getRemovalReason());
-    }
-
-    @Nullable
-    public MerchantEntity getMerchantEntity(ServerWorld serverWorld) {
-        if (serverWorld.getEntity(uuid()) instanceof MerchantEntity merchantEntity) {
-            return merchantEntity;
-        }
-
-        return null;
     }
 
     @Override

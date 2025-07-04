@@ -3,6 +3,7 @@ package me.monkeycat.unlimitedtrade.client;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
 import me.monkeycat.unlimitedtrade.client.config.Configs;
 import me.monkeycat.unlimitedtrade.client.config.types.AfterTradeActions;
 import me.monkeycat.unlimitedtrade.client.config.types.WaitProtoTypes;
@@ -49,6 +50,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
     private long lastTradeCloseTime = 0;
     private boolean manuallyClosedTrade = false;
     private boolean hasOpenedScreen = false;
+    private boolean lastStartUnlimitedTrade = false;
 
     public static UnlimitedTradeModClient getInstance() {
         return instance;
@@ -64,16 +66,38 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
 
         if (FabricLoader.getInstance().isModLoaded(ModIds.chunkdebug)) {
             chunkDataAPI = new ChunkDebugFromMixin();
-        } else chunkDataAPI = new ChunkDebugFromNetwork();
+            UnlimitedTradeMod.LOGGER.info("Use ChunkDebug Mixin API");
+        } else {
+            chunkDataAPI = new ChunkDebugFromNetwork();
+            UnlimitedTradeMod.LOGGER.info("Use ChunkDebug Custom Network API");
+        }
 
         START_CLIENT_TICK.register(this::tickHandle);
     }
 
-    public void tickHandle(MinecraftClient client) {
-        if (!Configs.START_TRADE.getBooleanValue()) return;
-        if (client.interactionManager == null || client.player == null) return;
+    private void resetTradeState() {
+        currentMerchantEntity = null;
+        chunkDataAPI.stopWatching();
+        unlimitedTradeProtocol.stopWatching();
+        hasOpenedScreen = false;
+        manuallyClosedTrade = false;
+        lastTradeCloseTime = 0;
+    }
 
-        HitResult hitResult = client.crosshairTarget;
+    public void tickHandle(MinecraftClient client) {
+        boolean tradeBooleanValue = Configs.START_TRADE.getBooleanValue();
+        if (lastStartUnlimitedTrade != tradeBooleanValue) {
+            lastStartUnlimitedTrade = tradeBooleanValue;
+            if (!tradeBooleanValue) {
+                // Reset state when trade is disabled
+                resetTradeState();
+                return;
+            }
+        }
+        if (!tradeBooleanValue || client.interactionManager == null || client.player == null) {
+            return;
+        }
+
         long now = System.currentTimeMillis();
 
         // Skip if the trade screen was manually closed and cooldown is not over
@@ -90,7 +114,11 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
             boolean shouldTrade = false;
             WaitProtoTypes waitProtoType = (WaitProtoTypes) Configs.WAIT_PROTO_TYPE.getOptionListValue();
             boolean checkChunkState = waitProtoType == WaitProtoTypes.AUTO || waitProtoType == WaitProtoTypes.CHUNKDEBUG;
-            if (checkChunkState && !Boolean.FALSE.equals(chunkDataAPI.getEnabled())) {
+            boolean checkUnlimitedTrade = waitProtoType == WaitProtoTypes.AUTO || waitProtoType == WaitProtoTypes.UNLIMITED_TRADE;
+
+            if (checkUnlimitedTrade && !Boolean.FALSE.equals(unlimitedTradeProtocol.getEnabled())) {
+                shouldTrade = unlimitedTradeProtocol.canTrade(currentMerchantEntity);
+            } else if (checkChunkState && !Boolean.FALSE.equals(chunkDataAPI.getEnabled())) {
                 shouldTrade = chunkDataAPI.canTrade(currentMerchantEntity);
             }
 
@@ -116,16 +144,21 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
             if (client.currentScreen != null || client.player.isSneaking()) return;
 
             currentMerchantEntity = merchantEntity;
+
             chunkDataAPI.startWatching(merchantEntity);
+            unlimitedTradeProtocol.startWatching(merchantEntity);
 
             if (!client.player.getPos().isInRange(merchantEntity.getPos(), 3)) return;
 
             chunkDataAPI.setStatusChangeFlag(false);
+            unlimitedTradeProtocol.setStatusChangeFlag(false);
+
             client.interactionManager.interactEntity(client.player, merchantEntity, Hand.MAIN_HAND);
             return;
         }
 
         // Interact with target block if it's not in the block drop blacklist
+        HitResult hitResult = client.crosshairTarget;
         AfterTradeActions afterTradeActions = (AfterTradeActions) Configs.AFTER_TRADE_ACTIONS.getOptionListValue();
         if (afterTradeActions == AfterTradeActions.USE || afterTradeActions == AfterTradeActions.USE_AND_DROP) {
             if (hitResult instanceof BlockHitResult blockHitResult) {

@@ -9,7 +9,7 @@ public interface ChunkDebugClientImpl {
 
     void startWatching(RegistryKey<World> dimension);
 
-    void stopWatching(RegistryKey<World> dimension);
+    void stopWatching();
 
     void refresh();
 }

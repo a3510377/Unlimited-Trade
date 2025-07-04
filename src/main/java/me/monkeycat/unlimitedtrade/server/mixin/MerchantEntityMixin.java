@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.Mixin;
 //$$ import org.spongepowered.asm.mixin.injection.At;
 //$$ import org.spongepowered.asm.mixin.injection.Inject;
 //$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+//$$
+//$$ import static net.minecraft.entity.Entity.RemovalReason.KILLED;
 //#endif
 
 @Restriction(require = @Condition(value = ModIds.minecraft, versionPredicates = ">=1.21.4"))
@@ -35,10 +37,7 @@ public abstract class MerchantEntityMixin extends LivingEntity {
     //$$
     //$$ RemovalReason reason = this.getRemovalReason();
     //$$
-    //$$ boolean allow = this.getCustomer() == player && this.getHealth() > 0.0F && (reason == null || switch (reason) {
-    //$$ case UNLOADED_TO_CHUNK, UNLOADED_WITH_PLAYER, CHANGED_DIMENSION -> true;
-    //$$ default -> false;
-    //$$ });
+    //$$ boolean allow = this.getCustomer() == player && this.getHealth() > 0.0F && (reason == null || reason != KILLED);
     //$$
     //$$ cir.setReturnValue(allow);
     //$$ }
