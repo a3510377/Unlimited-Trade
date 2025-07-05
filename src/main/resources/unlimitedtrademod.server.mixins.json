@@ -9,6 +9,7 @@
   "mixins": [
     "EndGatewayBlockMixin",
     "EntityMixin",
+    "FanetlibPacketRegistrationCenterMixin",
     "MerchantEntityMixin"
   ]
 }

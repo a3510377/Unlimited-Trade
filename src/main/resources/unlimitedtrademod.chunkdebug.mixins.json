@@ -10,7 +10,8 @@
     "chunkdebug.ChunkDebugClientMixin",
     "chunkdebug.ChunkDebugDataMixin",
     "chunkdebug.ChunkDebugMapAccessorMixin",
-    "chunkdebug.ChunkDebugMapDimensionStateMixin"
+    "chunkdebug.ChunkDebugMapDimensionStateAccessorMixin",
+    "chunkdebug.ChunkDebugScreenAccessorMixin"
   ],
   "refmap": "${archivesBaseName}-refmap.json"
 }

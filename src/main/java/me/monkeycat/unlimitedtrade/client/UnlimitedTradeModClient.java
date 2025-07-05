@@ -45,13 +45,21 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
     private static UnlimitedTradeModClient instance;
     @Nullable
     private static MerchantEntity currentMerchantEntity;
+    @Nullable
+    private static UnlimitedTradeProtocol unlimitedTradeProtocol;
+    @Nullable
     private BaseChunkDebugFrom chunkDataAPI;
-    private UnlimitedTradeProtocol unlimitedTradeProtocol;
     private long lastTradeCloseTime = 0;
     private boolean manuallyClosedTrade = false;
     private boolean hasOpenedScreen = false;
     private boolean lastStartUnlimitedTrade = false;
 
+    public static void registerPacketHandlers() {
+        unlimitedTradeProtocol = new UnlimitedTradeProtocol();
+        unlimitedTradeProtocol.init();
+    }
+
+    @Nullable
     public static UnlimitedTradeModClient getInstance() {
         return instance;
     }
@@ -59,10 +67,13 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
-        unlimitedTradeProtocol = new UnlimitedTradeProtocol();
+
+        if (unlimitedTradeProtocol == null) {
+            registerPacketHandlers();
+            UnlimitedTradeMod.LOGGER.warn("Mixin not setup UnlimitedTradeProtocol, trying to register it now.");
+        }
 
         Configs.init();
-        unlimitedTradeProtocol.init();
 
         if (FabricLoader.getInstance().isModLoaded(ModIds.chunkdebug)) {
             chunkDataAPI = new ChunkDebugFromMixin();
@@ -77,8 +88,12 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
 
     private void resetTradeState() {
         currentMerchantEntity = null;
-        chunkDataAPI.stopWatching();
-        unlimitedTradeProtocol.stopWatching();
+        if (chunkDataAPI != null) {
+            chunkDataAPI.stopWatching();
+        }
+        if (unlimitedTradeProtocol != null) {
+            unlimitedTradeProtocol.stopWatching();
+        }
         hasOpenedScreen = false;
         manuallyClosedTrade = false;
         lastTradeCloseTime = 0;
@@ -94,7 +109,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
                 return;
             }
         }
-        if (!tradeBooleanValue || client.interactionManager == null || client.player == null) {
+        if (!tradeBooleanValue || client.interactionManager == null || client.player == null || chunkDataAPI == null || unlimitedTradeProtocol == null) {
             return;
         }
 
@@ -187,7 +202,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         }
     }
 
-    public void startTrade(MinecraftClient client, MerchantScreen merchantScreen) {
+    public void startTrade(MinecraftClient ignoredClient, MerchantScreen merchantScreen) {
         MerchantScreenHandler handler = merchantScreen.getScreenHandler();
         IntArrayList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(handler).favorites;
 
@@ -218,6 +233,7 @@ public class UnlimitedTradeModClient implements ClientModInitializer {
         }
     }
 
+    @Nullable
     public BaseChunkDebugFrom getChunkDataAPI() {
         return chunkDataAPI;
     }

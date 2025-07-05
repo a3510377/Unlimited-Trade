@@ -15,6 +15,10 @@ repositories {
     }
 
     maven {
+        url = 'https://maven.fallenbreath.me/releases'
+    }
+
+    maven {
         url = "https://maven.terraformersmc.com/releases/"
     }
 
@@ -73,7 +77,9 @@ dependencies {
         }
     }
 
-    include(modImplementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:${project.conditionalmixin_version}"))
+    def fanetlibMcVer = mcVersion >= 12100 ? '1.21' : mcVersion >= 12006 ? '1.20.6' : mcVersion >= 12002 ? '1.20.2' : '1.15.2'
+    include(modImplementation("me.fallenbreath:fanetlib:${project.fanetlib_version}-mc${fanetlibMcVer}"))
+    include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${project.conditionalmixin_version}"))
 }
 
 String LANG_DIR = 'assets/unlimitedtrade/lang'

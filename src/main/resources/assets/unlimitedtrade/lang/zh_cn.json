@@ -36,5 +36,7 @@
   "carpet.rule.enablePersistentTradingScreen.extra.0": "启用后，即使村民所在区块未加载，交易界面仍保持开启",
   "carpet.rule.enablePersistentTradingScreen.extra.1": "玩家死亡或手动关闭交易界面时会正常关闭",
   "carpet.rule.enablePersistentTradingScreen.extra.2": "支持旧版虚空交易机制",
-  "carpet.rule.enablePersistentTradingScreen.extra.3": "如需使用旧版虚空交易，请同时启用 disableEndGatewayPlayerTicket 规则"
+  "carpet.rule.enablePersistentTradingScreen.extra.3": "如需使用旧版虚空交易，请同时启用 disableEndGatewayPlayerTicket 规则",
+  "carpet.rule.enableUnlimitedTradeProtocol.name": "启用无限制交易协议",
+  "carpet.rule.enableUnlimitedTradeProtocol.desc": "允许超出原版限制的自定义交易逻辑，可能会影响与原版客户端的兼容性。"
 }

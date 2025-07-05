@@ -2,8 +2,6 @@ package me.monkeycat.unlimitedtrade.client.protocol.chunkdebug;
 
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugClientImpl;
 import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugDataImpl;
-import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugDimensionStateImpl;
-import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugMapImpl;
 import me.monkeycat.unlimitedtrade.client.protocol.chunkdebug.types.ChunkData;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.registry.RegistryKey;
@@ -21,33 +19,17 @@ public class ChunkDebugFromMixin extends BaseChunkDebugFrom {
     }
 
     @Nullable
-    public ChunkDebugMapImpl getMap() {
-        return chunkDebugClient != null ? chunkDebugClient.unlimited_Trade$getChunkDebugMap() : null;
-    }
-
-    @Nullable
     public ChunkData getChunkData(ChunkPos chunkPos) {
         RegistryKey<World> worldRegistryKey = getCurrentWorld();
-        if (worldRegistryKey == null) {
+        if (worldRegistryKey == null || chunkDebugClient == null) {
             enabled = null;
             return null;
         }
 
-        ChunkDebugMapImpl chunkDebugMap = getMap();
-        if (chunkDebugMap == null) {
-            enabled = null;
-            return null;
-        }
-
-        ChunkDebugDimensionStateImpl dimensionState = chunkDebugMap.unlimited_Trade$getStates().get(worldRegistryKey);
-        if (dimensionState == null) {
-            enabled = null;
-            return null;
-        }
-
-        if (dimensionState.unlimited_Trade$getChunks().get(chunkPos.toLong()) instanceof ChunkDebugDataImpl chunkData) {
+        ChunkDebugDataImpl chunkStatus = chunkDebugClient.unlimited_Trade$getChunkData(worldRegistryKey, chunkPos);
+        if (chunkStatus != null) {
             enabled = true;
-            return ChunkData.fromChunkDebugDataImpl(chunkData, worldRegistryKey.getValue());
+            return ChunkData.fromChunkDebugDataImpl(chunkStatus, worldRegistryKey.getValue());
         }
 
         enabled = null;

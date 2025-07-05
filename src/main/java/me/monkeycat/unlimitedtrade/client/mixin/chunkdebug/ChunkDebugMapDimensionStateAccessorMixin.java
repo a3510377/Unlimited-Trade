@@ -10,16 +10,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Restriction(require = @Condition(ModIds.chunkdebug))
+@Restriction(require = @Condition(value = ModIds.chunkdebug, versionPredicates = ">2.0.0"))
 @Pseudo
 @Mixin(targets = "me.senseiwells.chunkdebug.client.gui.ChunkDebugMap$DimensionState")
-public class ChunkDebugMapDimensionStateMixin implements ChunkDebugDimensionStateImpl {
+public class ChunkDebugMapDimensionStateAccessorMixin implements ChunkDebugDimensionStateImpl {
     @Final
     @Shadow(remap = false)
     private Long2ObjectMap<Object> chunks;
 
     @Override
     public Long2ObjectMap<Object> unlimited_Trade$getChunks() {
-        return this.chunks;
+        return chunks;
     }
 }

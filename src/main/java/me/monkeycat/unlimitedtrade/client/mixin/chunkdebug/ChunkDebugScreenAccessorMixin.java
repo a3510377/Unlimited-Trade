@@ -13,16 +13,16 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Map;
 
-@Restriction(require = @Condition(value = ModIds.chunkdebug, versionPredicates = ">2.0.0"))
+@Restriction(require = @Condition(value = ModIds.chunkdebug, versionPredicates = ">=1.0.0 <2.0.0"))
 @Pseudo
-@Mixin(targets = "me.senseiwells.chunkdebug.client.gui.ChunkDebugMap")
-public abstract class ChunkDebugMapAccessorMixin implements ChunkDebugBaseGetStatusImpl {
+@Mixin(targets = "me.senseiwells.chunkdebug.client.gui.ChunkDebugScreen")
+public abstract class ChunkDebugScreenAccessorMixin implements ChunkDebugBaseGetStatusImpl {
     @Final
     @Shadow(remap = false)
     private Map<RegistryKey<World>, Object> states;
 
     @Override
     public Map<RegistryKey<World>, Object> unlimited_Trade$getStates() {
-        return states;
+        return this.states;
     }
 }

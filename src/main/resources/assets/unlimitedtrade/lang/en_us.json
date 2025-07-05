@@ -36,5 +36,7 @@
   "carpet.rule.enablePersistentTradingScreen.extra.0": "When enabled, the trade screen stays open even if the villager's chunk is unloaded",
   "carpet.rule.enablePersistentTradingScreen.extra.1": "Closes normally if the player dies or manually closes the screen",
   "carpet.rule.enablePersistentTradingScreen.extra.2": "Supports the old void trading behavior",
-  "carpet.rule.enablePersistentTradingScreen.extra.3": "Enable this rule along with disableEndGatewayPlayerTicket to use old void trading"
+  "carpet.rule.enablePersistentTradingScreen.extra.3": "Enable this rule along with disableEndGatewayPlayerTicket to use old void trading",
+  "carpet.rule.enableUnlimitedTradeProtocol.name": "Enables the Unlimited Trade protocol for extended trading features.",
+  "carpet.rule.enableUnlimitedTradeProtocol.desc": "Allows custom trade logic beyond vanilla limits. May affect compatibility with vanilla clients."
 }

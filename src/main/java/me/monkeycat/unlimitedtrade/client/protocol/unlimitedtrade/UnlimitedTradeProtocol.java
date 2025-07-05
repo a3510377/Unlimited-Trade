@@ -1,18 +1,14 @@
 package me.monkeycat.unlimitedtrade.client.protocol.unlimitedtrade;
 
+import me.fallenbreath.fanetlib.api.packet.FanetlibPackets;
+import me.fallenbreath.fanetlib.api.packet.PacketHandlerS2C;
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
 import me.monkeycat.unlimitedtrade.client.protocol.BaseProtocol;
-import me.monkeycat.unlimitedtrade.common.network.MerchantEntityStatusPayload;
-import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeHelloPayload;
-import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeStartWatchPayload;
-import me.monkeycat.unlimitedtrade.common.network.UnlimitedTradeStopWatchPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import me.monkeycat.unlimitedtrade.common.network.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.MerchantEntity;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -25,11 +21,13 @@ public class UnlimitedTradeProtocol extends BaseProtocol {
     private Entity.RemovalReason currentRemovalReason = null;
 
     public void init() {
-        ClientPlayNetworking.registerGlobalReceiver(UnlimitedTradeHelloPayload.ID, this::handleHello);
-        ClientPlayNetworking.registerGlobalReceiver(MerchantEntityStatusPayload.ID, this::handleMerchantEntityStatus);
+        System.out.println("Registering UnlimitedTrade protocol handlers");
+
+        FanetlibPackets.registerS2C(UnlimitedTradeHelloPayload.ID, UnlimitedTradeHelloPayload.PACKET_CODEC, this::handleHello);
+        FanetlibPackets.registerS2C(MerchantEntityStatusPayload.ID, MerchantEntityStatusPayload.PACKET_CODEC, this::handleMerchantEntityStatus);
     }
 
-    public void handleHello(UnlimitedTradeHelloPayload payload, ClientPlayNetworking.Context context) {
+    public void handleHello(UnlimitedTradeHelloPayload payload, PacketHandlerS2C.Context context) {
         if (payload.version() == PROTOCOL_VERSION) {
             UnlimitedTradeMod.LOGGER.info("UnlimitedTrade connection successful");
             enabled = true;
@@ -39,7 +37,7 @@ public class UnlimitedTradeProtocol extends BaseProtocol {
         }
     }
 
-    public void handleMerchantEntityStatus(MerchantEntityStatusPayload payload, ClientPlayNetworking.Context context) {
+    public void handleMerchantEntityStatus(MerchantEntityStatusPayload payload, PacketHandlerS2C.Context context) {
         enabled = true;
         if (currentMerchantEntity != null && currentMerchantEntity.getUuid().equals(payload.uuid())) {
             currentRemovalReason = payload.removalReason();
@@ -49,10 +47,11 @@ public class UnlimitedTradeProtocol extends BaseProtocol {
         }
     }
 
-    private void trySendPayload(Supplier<CustomPayload> supplier) {
+    private <P extends UnlimitedTradBasePayload<P>> void trySendPayload(Supplier<P> supplier) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            player.networkHandler.sendPacket(new CustomPayloadC2SPacket(supplier.get()));
+            P payload = supplier.get();
+            player.networkHandler.sendPacket(FanetlibPackets.createC2S(payload.getId(), payload));
         }
     }
 

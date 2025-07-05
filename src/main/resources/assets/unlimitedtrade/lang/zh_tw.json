@@ -36,5 +36,7 @@
   "carpet.rule.enablePersistentTradingScreen.extra.0": "啟用後，即使村民所在區塊未加載，交易畫面仍會保持開啟",
   "carpet.rule.enablePersistentTradingScreen.extra.1": "玩家死亡或手動關閉交易介面時，交易畫面會正常終止",
   "carpet.rule.enablePersistentTradingScreen.extra.2": "此規則可協助恢復舊版虛空交易機制",
-  "carpet.rule.enablePersistentTradingScreen.extra.3": "若需要使用舊版虛空交易，請同時啟用 disableEndGatewayPlayerTicket 規則"
+  "carpet.rule.enablePersistentTradingScreen.extra.3": "若需要使用舊版虛空交易，請同時啟用 disableEndGatewayPlayerTicket 規則",
+  "carpet.rule.enableUnlimitedTradeProtocol.name": "啟用無限制交易協議",
+  "carpet.rule.enableUnlimitedTradeProtocol.desc": "允許超出原版限制的自訂交易邏輯，可能會影響與原版客戶端的相容性。"
 }

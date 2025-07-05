@@ -32,8 +32,6 @@ def main() -> None:
     lines = [
         "## Summary:",
         "",
-        "---",
-        "",
         "| For Minecraft | File | Size | SHA256 |",
         "| :-----------: | :--: | :--: | :----: |",
     ]

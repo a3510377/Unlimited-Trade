@@ -8,10 +8,15 @@ public class UnlimitedTradeModSettings {
     public static final String TRADE = "trade";
 
     @Rule(categories = {FEATURE, TRADE})
-    public static boolean disableEndGatewayAnyTicket = false;
+    public static boolean enableUnlimitedTradeProtocol = true;
 
-    @Rule(categories = {FEATURE, TRADE})
-    public static boolean disableEndGatewayPlayerTicket = false;
+    //#if MC >= 12100
+    //$$ @Rule(categories = {FEATURE, TRADE})
+    //$$ public static boolean disableEndGatewayAnyTicket = false;
+    //$$
+    //$$ @Rule(categories = {FEATURE, TRADE})
+    //$$ public static boolean disableEndGatewayPlayerTicket = false;
+    //#endif
 
     //#if MC >= 12104
     //$$ @Rule(categories = {FEATURE, TRADE})

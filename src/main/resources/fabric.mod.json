@@ -37,6 +37,7 @@
   "recommends": {
     "malilib": "${malilib_dependency}",
     "itemscroller": "*",
-    "carpet": "${carpet_dependency}"
+    "carpet": "${carpet_dependency}",
+    "fanetlib": ">=0.2.0"
   }
 }

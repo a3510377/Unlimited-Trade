@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.util.restrictions.ItemRestriction;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
 import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
@@ -22,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//#if MC >= 12101
-import fi.dy.masa.malilib.util.data.ModInfo;
-//#endif
-
 import static me.monkeycat.unlimitedtrade.client.config.ConfigFactory.*;
+
+//#if MC >= 12101
+//$$ import fi.dy.masa.malilib.registry.Registry;
+//$$ import fi.dy.masa.malilib.util.data.ModInfo;
+//#endif
 
 public class Configs {
     public static final List<CustomConfigOption> OPTIONS = new ArrayList<>();
@@ -81,7 +81,7 @@ public class Configs {
             InputEventHandler.getKeybindManager().registerKeybindProvider(new KeybindProvider());
 
             //#if MC >= 12101
-            Registry.CONFIG_SCREEN.registerConfigScreenFactory(new ModInfo(UnlimitedTradeMod.MOD_ID, UnlimitedTradeMod.MOD_NAME, CustomConfigBaseGUI::new));
+            //$$ Registry.CONFIG_SCREEN.registerConfigScreenFactory(new ModInfo(UnlimitedTradeMod.MOD_ID, UnlimitedTradeMod.MOD_NAME, CustomConfigBaseGUI::new));
             //#endif
 
             OPEN_CONFIG_GUI.getKeybind().setCallback(((action, key) -> {
