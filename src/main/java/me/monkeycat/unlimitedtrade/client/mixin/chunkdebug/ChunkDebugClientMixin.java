@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 //#if MC >= 12100
 //$$ import java.lang.reflect.Field;
 //$$ import me.monkeycat.unlimitedtrade.UnlimitedTradeMod;
+//$$ import me.monkeycat.unlimitedtrade.client.impl.ChunkDebugMapImpl;
 //#endif
 
 @Restriction(require = @Condition(ModIds.chunkdebug))
@@ -56,6 +57,7 @@ public abstract class ChunkDebugClientMixin implements ChunkDebugClientImpl {
     //$$ public ChunkDebugMapImpl getMap() {
     //$$     return chunkDebugMap;
     //$$ }
+    //$$
     //#else
     @Unique
     @Nullable
